@@ -1,2 +1,1 @@
-# BamaBasketball
-abbie sux
+# Alabama Basketball 🏀⛹️‍♂️
