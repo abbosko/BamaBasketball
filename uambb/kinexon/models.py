@@ -1,3 +1,13 @@
 from django.db import models
 
-# Create your models here.
+
+class Player(models.Model):
+    name = models.CharField(unique=True)
+    
+
+class Practice(models.Model):
+    date = models.DateTimeField(null=False)
+
+class Team(models.Model):
+    name = models.CharField(unique=True)
+    
