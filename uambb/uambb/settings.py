@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'kinexon.apps.KinexonConfig',
+    'bamalytics.apps.BamalyticsConfig',
     'rest_framework'
 ]
 

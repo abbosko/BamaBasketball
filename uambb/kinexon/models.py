@@ -17,7 +17,7 @@ class Team(models.Model):
     
 class Statistics(models.Model):
     practice_id = models.ForeignKey(Practice, null=False, blank=False, on_delete=models.CASCADE)
-    player_id = models.ForeignKey(Player, null=False,blank=False, on_delete=models.Cascade)
+    player_id = models.ForeignKey(Player, null=False,blank=False, on_delete=models.CASCADE)
 
     # Hawkins Data
     jump_height = models.DecimalField(null=True,blank=True)
