@@ -18,9 +18,9 @@ class HomeView(generic.ListView):          # ListView -> display list of objs
 
 class PlayerView(generic.DetailView):       # DetailView -> display details for list of objs
     model = Player
-    template_name = "bamalytics/player.html"
+    template_name = "player.html"
 
 
 class TeamView(generic.DetailView):
     model = Team
-    template_name = "bamalytics/team.html"
+    template_name = "team.html"
