@@ -12,14 +12,14 @@ class IndexView(generic.ListView):          # ListView -> display list of objs
 
     def get_queryset(self):
         """Return the last five players."""
-        return Player.objects.order_by("name")[:5]
+        return Player.objects.order_by("name")
 
 
 class PlayerView(generic.DetailView):       # DetailView -> display details for list of objs
     model = Player
-    template_name = "kinexon/player.html"
+    template_name = "bamalytics/player.html"
 
 
 class TeamView(generic.DetailView):
     model = Team
-    template_name = "kinexon/team.html"
+    template_name = "bamalytics/team.html"

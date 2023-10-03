@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Player(models.Model):
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True, primary_key=True)
     height = models.DecimalField(max_digits=10, decimal_places=3, null=True,blank=True)
     weight = models.DecimalField(max_digits=10, decimal_places=3, null=True,blank=True)
     age = models.DecimalField(max_digits=10, decimal_places=3, null=True,blank=True)
@@ -20,7 +20,7 @@ class Practice(models.Model):
     
 
 class Team(models.Model):
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True, primary_key=True)
     
     def __str__(self):
         return self.name
