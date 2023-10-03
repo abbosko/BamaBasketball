@@ -127,3 +127,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+KINEXON_URL = os.getenv('KINEXON_URL')
+KINEXON_API_KEY =  os.getenv('KINEXON_API_KEY')
+KINEXON_TEAM_ID =  os.getenv('KINEXON_TEAM_ID')
+
+HAWKINS_URL =  os.getenv('HAWKINS_URL')
+HAWKINS_API_KEY =  os.getenv('HAWKINS_API_KEY')
+
+FIRSTBEAT_URL =  os.getenv('FIRSTBEAT_URL')
+FIRSTBEAT_API_KEY =  os.getenv('FIRSTBEAT_API_KEY')
+FIRSTBEAT_SHARED_SECRET =  os.getenv('FIRSTBEAT_SHARED_SECRET')
+FIRSTBEAT_CONSUMERID =  os.getenv('FIRSTBEAT_CONSUMER_ID')
