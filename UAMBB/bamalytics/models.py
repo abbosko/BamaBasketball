@@ -16,6 +16,32 @@ class Player(models.Model):
     def __str__(self):
         return self.first_name
     
+    def get_player_first_name(self):
+        return self.first_name
+    
+    def get_player_last_name(self):
+        return self.last_name
+    
+    def get_player_full_name(self):
+        return self.first_name + " " + self.last_name
+    
+    def get_player_height(self):
+        return self.height
+    
+    def get_player_weight(self):
+        return self.weight
+    
+    def get_player_age(self):
+        return self.age
+    
+    def get_player_id(self):
+        return self.id
+    
+    def get_player_stats_by_practice_id(self, practice_date):
+        pass
+
+
+    
 
 class Practice(models.Model):
     date = models.DateTimeField(null=False)
@@ -23,11 +49,18 @@ class Practice(models.Model):
     def __str__(self):
         return self.date
     
+    def get_practice_stats(self):
+        pass 
+
+    
 
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True, primary_key=True)
     
     def __str__(self):
+        return self.name
+    
+    def get_team_name(self):
         return self.name
     
 class Statistics(models.Model):
@@ -64,3 +97,38 @@ class Statistics(models.Model):
     
     def __str__(self):
         return self.practice_id
+    
+    def get_stats_by_practice_id(self):
+        pass
+
+       
+    def get_stats_by_practice_date(self):
+        pass
+
+    def get_stats_by_player_id(self):
+        pass
+
+    def get_stats_by_playerid_practiceid(self):
+        pass 
+
+    def get_firstbeat_data(self):
+        pass
+
+    def set_trimp():
+        pass
+
+    def set_training_status(self):
+        pass
+
+    def set_calories(self):
+        pass 
+
+    def get_trimp(self):
+        return self.training_impulse
+    
+    def get_training_status(self):
+        return self.training_status
+    
+    def get_calories(self):
+        return self.calories
+    
