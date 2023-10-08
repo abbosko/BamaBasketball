@@ -9,6 +9,11 @@ function App() {
         <p>
           Bamalytics
         </p>
+        <p>
+          <font size="1">
+            Abbie sux
+          </font>
+        </p>
         <a
           className="App-link"
           href="https://reactjs.org"
