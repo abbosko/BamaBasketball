@@ -1,5 +1,6 @@
 import logo from './AlabamaLogo.svg';
 import './App.css';
+import './apiFunctions';
 
 function App() {
   return (
