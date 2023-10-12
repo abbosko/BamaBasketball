@@ -2,18 +2,6 @@ import { getDatabase, ref, set, get} from "firebase/database";
 
 const db = getDatabase()
 
-function add_player(fname, lname, id, height, weight, position){
-    let player;
-    player = new Player(fname, lname, id, height, weight, position);
-    reference = ref(db, '/players/' + this.id)
-    set (reference, {
-        fname: this.fname, 
-        lname: this.lname,
-        height: this.height,
-        weight: this.weight,
-        position: this.position,
-    });
-}
 
 class Player {
     contructor(fname, lname, id, height, weight, position) {
