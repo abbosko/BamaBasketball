@@ -71,37 +71,12 @@ apiKinexonTest();*/
 * Firstbeat API calls! :)
 */
 let fbAuth = 'Bearer ' + token.genFbToken();                // generates authorization token
-const fbAccountId = '3-4545';                                 // UA Men's Bball accountId
+const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
-
-// gets account info, stores account id
-/*const apiFirstBeatAccount = () => {
-    fetch(process.env.FIRSTBEAT_URL, {
-        headers: {
-            Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
-        }
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
-        } else { 
-            throw new Error('API request failed'); 
-        } 
-    }) 
-    .then(data => {         
-        fbAccountId = data.accounts[0].accountId;           // firstbeat account id, need for all other API calls
-        console.log(fbAccountId);
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
-}*/
-
 
 // gets athlete info, creates instance of 'FBAthlete', stores in fbAthleteArray
 const apiFirstBeatAthletes = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/', fbAccountId, '/athletes'), {  // add {accountId}/athletes to url
+    fetch((process.env.FIRSTBEAT_URL).concat('/athletes'), { // add {accountId}/athletes to url
         headers: {
             Authorization: fbAuth,
             "X-Api-Key": process.env.FIRSTBEAT_API_KEY
@@ -115,7 +90,7 @@ const apiFirstBeatAthletes = () => {
         } 
     }) 
     .then(data => {      
-        for(let i = 0; i < data.athletes.length; i++) {
+        for(let i = 0; i < data.athletes.length; i++) {     // create FBAthlete & push onto fbAthleteArray
             fbAthleteArray.push(new FBAthlete(data.athletes[i].firstName, data.athletes[i].lastName, data.athletes[i].email, data.athletes[i].athleteId));
         }
     }) 
@@ -124,4 +99,75 @@ const apiFirstBeatAthletes = () => {
     });
 }
 
-apiFirstBeatAthletes();
+// did this to get team id, do we need groups??
+const apiFirstBeatTeam = () => {
+    fetch((process.env.FIRSTBEAT_URL).concat('/teams'), {  // add team to url
+        headers: {
+            Authorization: fbAuth,
+            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+        }
+    }) 
+    .then(response => { 
+        if (response.ok) { 
+            return response.json();
+        } else { 
+            throw new Error('API request failed'); 
+        } 
+    }) 
+    .then(data => {
+        for(let i = 0; i < 3; i++) {
+           console.log(data.teams[0].groups[i]);
+        }      
+    }) 
+    .catch(error => { 
+        console.error(error);
+    });
+}
+
+//gets sessions going back to June 1st, 2022; store this data somewhere
+const apiFirstBeatSessions = () => {
+    fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions'), {  // add teams/{teamId}/sessions to url
+        headers: {
+            Authorization: fbAuth,
+            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+        }
+    }) 
+    .then(response => { 
+        if (response.ok) { 
+            return response.json();
+        } else { 
+            throw new Error('API request failed'); 
+        } 
+    }) 
+    .then(data => {
+        console.log(data);     
+    }) 
+    .catch(error => { 
+        console.error(error);
+    });
+}
+
+// results for indiv session, session # for June 1st, 2022 is hard coded rn for an example
+const apiFirstBeatSessionResults = () => {
+    fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/575554/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
+        headers: {
+            Authorization: fbAuth,
+            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+        }
+    }) 
+    .then(response => { 
+        if (response.ok) { 
+            return response.json;
+        } else { 
+            throw new Error('API request failed'); 
+        } 
+    }) 
+    .then(data => {
+        console.log(data);     
+    }) 
+    .catch(error => { 
+        console.error(error);
+    });
+}
+
+apiFirstBeatSessionResults();
