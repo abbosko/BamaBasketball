@@ -12,58 +12,27 @@ function FBAthlete(fname, lname, email, id) {
 }
 
 /*const apiHawkinsTest = () => {
-    fetch(process.env.HAWKINS_URL, {
+    fetch((process.env.HAWKINS_URL), {
         headers: {
-            Authorization: "bearer ${process.env.HAWKINS_API_KEY}"
-            //X-AUTH-TOKEN': process.env.HAWKINS_API_KEY
+            Authorization: process.env.FHAWKINS_API_KEY
         }
     }) 
     .then(response => { 
         if (response.ok) { 
-        return response.text(); // Parse the response data as JSON 
-        //return response;
+            return response.json();
         } else { 
-        throw new Error('API request failed'); 
+            throw new Error('API request failed'); 
         } 
     }) 
-    .then(data => { 
-        // Process the response data here 
-        console.log(data); // Example: Logging the data to the console 
+    .then(data => {      
+        console.log(data);
     }) 
     .catch(error => { 
-        // Handle any errors here 
-        console.error(error); // Example: Logging the error to the console 
+        console.error(error);
     });
 }
 
 apiHawkinsTest();*/
-
-/*const apiKinexonTest = () => {
-    fetch(process.env.KINEXON_URL, {
-        headers: {
-            //Authorization: 'Bearer ${process.env.KINEXON_API_KEY}'
-            'X-AUTH-TOKEN': process.env.KINEXON_API_KEY
-        }
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-        return response.text(); // Parse the response data as JSON 
-        //return response;
-        } else { 
-        throw new Error('API request failed'); 
-        } 
-    }) 
-    .then(data => { 
-        // Process the response data here 
-        console.log(data); // Example: Logging the data to the console 
-    }) 
-    .catch(error => { 
-        // Handle any errors here 
-        console.error(error); // Example: Logging the error to the console 
-    });
-}
-
-apiKinexonTest();*/
 
 
 
@@ -84,7 +53,7 @@ const apiFirstBeatAthletes = () => {
     }) 
     .then(response => { 
         if (response.ok) { 
-            return response.json();
+            return response;
         } else { 
             throw new Error('API request failed'); 
         } 
@@ -140,16 +109,18 @@ const apiFirstBeatSessions = () => {
         } 
     }) 
     .then(data => {
-        console.log(data);     
+        for(let i = 0; i < 5; i++) {    // get last 5 sessions
+            console.log(data.sessions[data.sessions.length - 1 - i]);
+        }     
     }) 
     .catch(error => { 
         console.error(error);
     });
 }
 
-// results for indiv session, session # for June 1st, 2022 is hard coded rn for an example
+// results for indiv session, session # for Oct 14th, 2023 is hard coded rn for an example
 const apiFirstBeatSessionResults = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/575554/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
+    fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/725121/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
         headers: {
             Authorization: fbAuth,
             "X-Api-Key": process.env.FIRSTBEAT_API_KEY
@@ -157,13 +128,31 @@ const apiFirstBeatSessionResults = () => {
     }) 
     .then(response => { 
         if (response.ok) { 
-            return response.json;
+            return response.json();
         } else { 
             throw new Error('API request failed'); 
         } 
     }) 
     .then(data => {
-        console.log(data);     
+        for(let i = 0; i < data.measurements.length; i++) {
+            console.log(data.measurements[i].variables[8].name);        // energyConsumptionCarbs
+            console.log(data.measurements[i].variables[8].value);
+
+            console.log(data.measurements[i].variables[3].name);       // energyConsumptionFats
+            console.log(data.measurements[i].variables[3].value);
+
+            console.log(data.measurements[i].variables[16].name);        // energyConsumptionTotal
+            console.log(data.measurements[i].variables[16].value);
+
+            console.log(data.measurements[i].variables[1].name);       // playerStatusScore
+            console.log(data.measurements[i].variables[1].value);
+
+            console.log(data.measurements[i].variables[6].name);        // trimp
+            console.log(data.measurements[i].variables[6].value);
+
+            console.log(data.measurements[i].variables[24].name);       //trimpPerMinute
+            console.log(data.measurements[i].variables[24].value);
+        }
     }) 
     .catch(error => { 
         console.error(error);
