@@ -11,10 +11,62 @@ function FBAthlete(fname, lname, email, id) {
     this.id = id;
 }
 
-const hawkAuth = 'Bearer ' + process.env.HAWKINS_API_KEY;
+const kinAuth = 'Bearer ' + process.env.KINEXON_API_KEY;
+//const apiKey
 
 // gets all data starting from Oct 13, 2023 @ midnight
-const apiHawkinsTest = () => {
+const apiKinexonTest = () => {
+    fetch((process.env.KINEXON_URL).concat('/teams/6/players?apiKey=', process.env.KINEXON_API_KEY), {
+        headers: {
+            'Accept': 'application/json',
+            //'Content-Type' : 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
+        },
+    }) 
+    .then(response => { 
+        if (response.ok) { 
+            return response.json();
+        } else { 
+            throw new Error('API request failed'); 
+        } 
+    }) 
+    .then(data => {   
+        console.log(data);
+    }) 
+    .catch(error => { 
+        console.error(error);
+    });
+}
+
+/*async function apiKinexonTest() {
+    const username = process.env.KINEXON_API_USERNAME;
+    const password = process.env.KINEXON_API_PASSWORD;
+    const apiKey1 = process.env.KINEXON_API_KEY;
+    const url1 = process.env.KINEXON_URL + '/statistics/list?apiKey=' + apiKey1;
+
+    const response1  = await fetch(url1, {
+        method: 'GET',
+        headers: {
+            'Accept' : '',
+            'Authorization' : 'Basic ' + Buffer.from(username + ':' + password).toString('base64'),
+        }
+    })
+    if(response1.ok) {
+        console.log('woohoo!');
+    }
+}*/
+
+apiKinexonTest();
+
+
+
+/*
+* Hawkins API calls! :)
+*/
+/*const hawkAuth = 'Bearer ' + process.env.HAWKINS_API_KEY;
+
+// gets all data starting from Oct 13, 2023 @ midnight
+const apiHawkinsTests = () => {
     fetch((process.env.HAWKINS_URL).concat('?from=1697173200'), {
         headers: {
             Authorization: hawkAuth
@@ -61,7 +113,7 @@ const apiHawkinsTest = () => {
     });
 }
 
-apiHawkinsTest();
+apiHawkinsTests();*/
 
 
 
