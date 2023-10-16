@@ -11,10 +11,13 @@ function FBAthlete(fname, lname, email, id) {
     this.id = id;
 }
 
-/*const apiHawkinsTest = () => {
-    fetch((process.env.HAWKINS_URL), {
+const hawkAuth = 'Bearer ' + process.env.HAWKINS_API_KEY;
+
+// gets all data starting from Oct 13, 2023 @ midnight
+const apiHawkinsTest = () => {
+    fetch((process.env.HAWKINS_URL).concat('?from=1697173200'), {
         headers: {
-            Authorization: process.env.FHAWKINS_API_KEY
+            Authorization: hawkAuth
         }
     }) 
     .then(response => { 
@@ -24,22 +27,48 @@ function FBAthlete(fname, lname, email, id) {
             throw new Error('API request failed'); 
         } 
     }) 
-    .then(data => {      
-        console.log(data);
+    .then(data => {   
+        let measurements = data.data[0]; 
+        console.log('Jump height');
+        console.log(measurements['Jump Height(m)']);
+
+        console.log('mRSI');
+        console.log(measurements['mRSI']);
+
+        console.log('Time to takeoff');
+        console.log(measurements['Time To Takeoff(s)']);
+
+        console.log('Braking phase');
+        console.log(measurements['Braking Phase(s)']);
+
+        console.log('Peak relative propulsive power');
+        console.log(measurements['Peak Relative Propulsive Power(W/kg)']);
+
+        console.log('Braking power');
+        console.log(measurements['Avg. Braking Power(W)']);
+
+        console.log('Braking net impulse');
+        console.log(measurements['Braking Net Impulse(N.s)']);
+
+        console.log('Propulsive net impulse');
+        console.log(measurements['Propulsive Net Impulse(N.s)']);
+
+        console.log('L/R avg braking force');
+        console.log(measurements['L|R Avg. Braking Force(%)']);
     }) 
     .catch(error => { 
         console.error(error);
     });
 }
 
-apiHawkinsTest();*/
+apiHawkinsTest();
 
 
 
 /*
 * Firstbeat API calls! :)
 */
-let fbAuth = 'Bearer ' + token.genFbToken();                // generates authorization token
+/*let fbAuth = 'Bearer ' + token.genFbToken();                // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
 
@@ -159,4 +188,4 @@ const apiFirstBeatSessionResults = () => {
     });
 }
 
-apiFirstBeatSessionResults();
+apiFirstBeatSessionResults();*/
