@@ -11,15 +11,18 @@ function FBAthlete(fname, lname, email, id) {
     this.id = id;
 }
 
-const kinAuth = 'Bearer ' + process.env.KINEXON_API_KEY;
-//const apiKey
 
-// gets all data starting from Oct 13, 2023 @ midnight
-const apiKinexonTest = () => {
-    fetch((process.env.KINEXON_URL).concat('/teams/6/players?apiKey=', process.env.KINEXON_API_KEY), {
+var kinBeginDate = '2023-10-10%2000%3A00%3A00';
+var kinEndDate = '2023-10-15%2000%3A00%3A00';
+var kinPlayerId = '81';
+const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
+
+
+// have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
+const apiKinexonStats = () => {
+    fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions?min=', kinBeginDate, '&max=', kinEndDate, '&fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
-            //'Content-Type' : 'application/json',
             'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
         },
     }) 
@@ -38,24 +41,6 @@ const apiKinexonTest = () => {
     });
 }
 
-/*async function apiKinexonTest() {
-    const username = process.env.KINEXON_API_USERNAME;
-    const password = process.env.KINEXON_API_PASSWORD;
-    const apiKey1 = process.env.KINEXON_API_KEY;
-    const url1 = process.env.KINEXON_URL + '/statistics/list?apiKey=' + apiKey1;
-
-    const response1  = await fetch(url1, {
-        method: 'GET',
-        headers: {
-            'Accept' : '',
-            'Authorization' : 'Basic ' + Buffer.from(username + ':' + password).toString('base64'),
-        }
-    })
-    if(response1.ok) {
-        console.log('woohoo!');
-    }
-}*/
-
 apiKinexonTest();
 
 
@@ -66,7 +51,7 @@ apiKinexonTest();
 /*const hawkAuth = 'Bearer ' + process.env.HAWKINS_API_KEY;
 
 // gets all data starting from Oct 13, 2023 @ midnight
-const apiHawkinsTests = () => {
+const apiHawkinsStats = () => {
     fetch((process.env.HAWKINS_URL).concat('?from=1697173200'), {
         headers: {
             Authorization: hawkAuth
@@ -113,7 +98,7 @@ const apiHawkinsTests = () => {
     });
 }
 
-apiHawkinsTests();*/
+apiHawkinsStats();*/
 
 
 
