@@ -12,7 +12,7 @@ function FBAthlete(fname, lname, email, id) {
 }
 
 
-var kinBeginDate = '2023-10-10%2000%3A00%3A00';
+/*var kinBeginDate = '2023-10-10%2000%3A00%3A00';
 var kinEndDate = '2023-10-15%2000%3A00%3A00';
 var kinPlayerId = '81';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
@@ -41,7 +41,7 @@ const apiKinexonStats = () => {
     });
 }
 
-apiKinexonTest();
+apiKinexonStats();*/
 
 
 
@@ -105,7 +105,7 @@ apiHawkinsStats();*/
 /*
 * Firstbeat API calls! :)
 */
-/*let fbAuth = 'Bearer ' + token.genFbToken();                // generates authorization token
+let fbAuth = 'Bearer ' + token.genFbToken();                // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
 
@@ -119,7 +119,7 @@ const apiFirstBeatAthletes = () => {
     }) 
     .then(response => { 
         if (response.ok) { 
-            return response;
+            return response.json();
         } else { 
             throw new Error('API request failed'); 
         } 
@@ -135,7 +135,7 @@ const apiFirstBeatAthletes = () => {
 }
 
 // did this to get team id, do we need groups??
-const apiFirstBeatTeam = () => {
+/*const apiFirstBeatTeam = () => {
     fetch((process.env.FIRSTBEAT_URL).concat('/teams'), {  // add team to url
         headers: {
             Authorization: fbAuth,
@@ -157,7 +157,7 @@ const apiFirstBeatTeam = () => {
     .catch(error => { 
         console.error(error);
     });
-}
+}*/
 
 //gets sessions going back to June 1st, 2022; store this data somewhere
 const apiFirstBeatSessions = () => {
@@ -199,30 +199,23 @@ const apiFirstBeatSessionResults = () => {
             throw new Error('API request failed'); 
         } 
     }) 
-    .then(data => {
+    .then(data => {             // have to do it this way bc variables array switches around every time i call for some reason
+        
+
         for(let i = 0; i < data.measurements.length; i++) {
-            console.log(data.measurements[i].variables[8].name);        // energyConsumptionCarbs
-            console.log(data.measurements[i].variables[8].value);
-
-            console.log(data.measurements[i].variables[3].name);       // energyConsumptionFats
-            console.log(data.measurements[i].variables[3].value);
-
-            console.log(data.measurements[i].variables[16].name);        // energyConsumptionTotal
-            console.log(data.measurements[i].variables[16].value);
-
-            console.log(data.measurements[i].variables[1].name);       // playerStatusScore
-            console.log(data.measurements[i].variables[1].value);
-
-            console.log(data.measurements[i].variables[6].name);        // trimp
-            console.log(data.measurements[i].variables[6].value);
-
-            console.log(data.measurements[i].variables[24].name);       //trimpPerMinute
-            console.log(data.measurements[i].variables[24].value);
+            for(let j = 0; j < data.measurements[i].variables.length; j++) {
+                if(data.measurements[i].variables[j].name == 'trimp') console.log(data.measurements[i].variables[j].name, ' = ', data.measurements[i].variables[j].value);
+                if(data.measurements[i].variables[j].name == 'energyConsumptionTotal') console.log(data.measurements[i].variables[j].name, ' = ', data.measurements[i].variables[j].value);
+                if(data.measurements[i].variables[j].name == 'playerStatusScore') console.log(data.measurements[i].variables[j].name, ' = ', data.measurements[i].variables[j].value, '\n');
+            }
         }
+        
     }) 
     .catch(error => { 
         console.error(error);
     });
 }
 
-apiFirstBeatSessionResults();*/
+
+
+apiFirstBeatSessionResults();
