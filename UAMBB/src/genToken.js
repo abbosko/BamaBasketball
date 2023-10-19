@@ -1,8 +1,8 @@
 'use strict';
 require('dotenv').config({path:"./.env"}); 
 
-//npm install jsonwebtoken
 module.exports = {
+    //npm install jsonwebtoken
     genFbToken: function() {                    // FIRSTBEAT TOKEN
         const jwt = require('jsonwebtoken');
         const SECRET = process.env.FIRSTBEAT_SHARED_SECRET;
@@ -19,7 +19,7 @@ module.exports = {
         return token;
     },
 
-    genHawkinToken: async function() {
+    genHawkinToken: async function() {          // HAWKIN TOKEN
         let hawkinTokenData = await fetch(('https://cloud.hawkindynamics.com/api/token'), {
             headers: {
                 Authorization: 'Bearer ' + process.env.HAWKINS_REFRESH_TOKEN
@@ -27,29 +27,7 @@ module.exports = {
         })
         
         let hawkinTokenResponse = await hawkinTokenData.json();
-        //console.log(hawkinTokenResponse);
         return hawkinTokenResponse.access_token; 
     }  
-    
-    /*
-    fetch((' https://cloud.hawkindynamics.com/api/token'), { // add {accountId}/athletes to url
-        headers: {
-            Authorization: 'Bearer ' + process.env.HAWKINS_REFRESH_TOKEN
-        }
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
-        } else { 
-            throw new Error('API request failed'); 
-        } 
-    }) 
-    .then(data => {      
-        console.log(data);
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
-    */
 }
 
