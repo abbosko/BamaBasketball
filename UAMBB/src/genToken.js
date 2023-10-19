@@ -17,5 +17,39 @@ module.exports = {
 
         const token = jwt.sign(payload, SECRET); 
         return token;
-    }
+    },
+
+    genHawkinToken: async function() {
+        let hawkinTokenData = await fetch(('https://cloud.hawkindynamics.com/api/token'), {
+            headers: {
+                Authorization: 'Bearer ' + process.env.HAWKINS_REFRESH_TOKEN
+            }
+        })
+        
+        let hawkinTokenResponse = await hawkinTokenData.json();
+        //console.log(hawkinTokenResponse);
+        return hawkinTokenResponse.access_token; 
+    }  
+    
+    /*
+    fetch((' https://cloud.hawkindynamics.com/api/token'), { // add {accountId}/athletes to url
+        headers: {
+            Authorization: 'Bearer ' + process.env.HAWKINS_REFRESH_TOKEN
+        }
+    }) 
+    .then(response => { 
+        if (response.ok) { 
+            return response.json();
+        } else { 
+            throw new Error('API request failed'); 
+        } 
+    }) 
+    .then(data => {      
+        console.log(data);
+    }) 
+    .catch(error => { 
+        console.error(error);
+    });
+    */
 }
+

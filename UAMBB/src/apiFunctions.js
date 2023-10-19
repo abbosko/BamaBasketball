@@ -48,13 +48,11 @@ apiKinexonStats();*/
 /*
 * Hawkins API calls! :)
 */
-/*const hawkAuth = 'Bearer ' + process.env.HAWKINS_API_KEY;
-
 // gets all data starting from Oct 13, 2023 @ midnight
-const apiHawkinsStats = () => {
+const apiHawkinsStats = async () => {
     fetch((process.env.HAWKINS_URL).concat('?from=1697173200'), {
         headers: {
-            Authorization: hawkAuth
+            Authorization: 'Bearer ' + await token.genHawkinToken()
         }
     }) 
     .then(response => { 
@@ -98,7 +96,7 @@ const apiHawkinsStats = () => {
     });
 }
 
-apiHawkinsStats();*/
+apiHawkinsStats();
 
 
 
@@ -218,4 +216,4 @@ const apiFirstBeatSessionResults = () => {
 
 
 
-apiFirstBeatSessionResults();
+//apiFirstBeatSessions();
