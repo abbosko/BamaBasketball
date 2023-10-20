@@ -12,14 +12,14 @@ function FBAthlete(fname, lname, email, id) {
 }
 
 
-/*var kinBeginDate = '2023-10-10%2000%3A00%3A00';
+var kinBeginDate = '2023-10-10%2000%3A00%3A00';
 var kinEndDate = '2023-10-15%2000%3A00%3A00';
 var kinPlayerId = '81';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
 
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
-const apiKinexonStats = () => {
+/*const apiKinexonStats = () => {
     fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions?min=', kinBeginDate, '&max=', kinEndDate, '&fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
@@ -48,55 +48,49 @@ apiKinexonStats();*/
 /*
 * Hawkins API calls! :)
 */
-// gets all data starting from Oct 13, 2023 @ midnight
+
+function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePhase, prpp, brakePwr, brakeNetImp, propNetImp, LRBrakeForce) {
+    this.timestamp = timestamp;
+    this.athleteId = athleteId;
+    this.jumpHeight = jumpHeight;
+    this.mRSI = mRSI;
+    this.timeTakeoff = timeTakeoff; 
+    this.brakePhase = brakePhase;
+    this.prpp = prpp;
+    this.brakePwr = brakePwr;
+    this.brakeNetImp = brakeNetImp;
+    this.propNetImp = propNetImp;
+    this.LRBrakeForce = LRBrakeForce;
+}
+
+// gets all data starting from June 1, 2023 @ midnight: 1685595600
 const apiHawkinsStats = async () => {
-    fetch((process.env.HAWKINS_URL).concat('?from=1697173200'), {
+    let hawkStructArray = [];
+
+    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=1685595600'), {
         headers: {
             Authorization: 'Bearer ' + await token.genHawkinToken()
         }
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
-        } else { 
-            throw new Error('API request failed'); 
-        } 
-    }) 
-    .then(data => {   
-        let measurements = data.data[0]; 
-        console.log('Jump height');
-        console.log(measurements['Jump Height(m)']);
-
-        console.log('mRSI');
-        console.log(measurements['mRSI']);
-
-        console.log('Time to takeoff');
-        console.log(measurements['Time To Takeoff(s)']);
-
-        console.log('Braking phase');
-        console.log(measurements['Braking Phase(s)']);
-
-        console.log('Peak relative propulsive power');
-        console.log(measurements['Peak Relative Propulsive Power(W/kg)']);
-
-        console.log('Braking power');
-        console.log(measurements['Avg. Braking Power(W)']);
-
-        console.log('Braking net impulse');
-        console.log(measurements['Braking Net Impulse(N.s)']);
-
-        console.log('Propulsive net impulse');
-        console.log(measurements['Propulsive Net Impulse(N.s)']);
-
-        console.log('L/R avg braking force');
-        console.log(measurements['L|R Avg. Braking Force(%)']);
-    }) 
-    .catch(error => { 
-        console.error(error);
     });
+
+    let hawkinResponse = await hawkinStats.json();
+    for(let i = 0; i < hawkinResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto hawkStructArray
+        const m = hawkinResponse.data[i];
+        hawkStructArray.push(new hawkStruct(m.timestamp, m.athlete.id, m['Jump Height(m)'], m['mRSI'], m['Time To Takeoff(s)'], m['Braking Phase(s)'], m['Peak Relative Propulsive Power(W/kg)'], m['Avg. Braking Power(W)'], m['Braking Net Impulse(N.s)'], m['Propulsive Net Impulse(N.s)'], m['L|R Avg. Braking Force(%)']));
+    }
+
+    return hawkStructArray;
 }
 
-apiHawkinsStats();
+async function setHawkins() {
+    let stats = await apiHawkinsStats();
+    for(let i = 0; i < stats.length; i++) {
+        set(ref(db, 'HawkinStats/' + timestamp), {
+            // values here
+        });
+    }
+}
+setHawkins();
 
 
 
