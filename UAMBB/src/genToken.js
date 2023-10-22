@@ -23,3 +23,13 @@ export function genToken() {                    // FIRSTBEAT TOKEN
         const token = jwts.sign(payload, SECRET); 
         return token;
     }
+export async function genHawkinToken() {          // HAWKIN TOKEN
+        let hawkinTokenData = await fetch(('https://cloud.hawkindynamics.com/api/token'), {
+            headers: {
+                Authorization: 'Bearer ' + process.env.HAWKINS_REFRESH_TOKEN
+            }
+        })
+        
+        let hawkinTokenResponse = await hawkinTokenData.json();
+        return hawkinTokenResponse.access_token; 
+    }  
