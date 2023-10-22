@@ -1,10 +1,15 @@
 'use strict';
-require('dotenv').config({path:"./.env"}); 
+import * as dotenv from 'dotenv';
+import jwt from 'jsonwebtoken'
+// import { sign, decode, verify } from 'jsonwebtoken'
+
+
+dotenv.config()
 
 //npm install jsonwebtoken
-module.exports = {
-    genFbToken: function() {                    // FIRSTBEAT TOKEN
-        const jwt = require('jsonwebtoken');
+
+export function genToken() {                    // FIRSTBEAT TOKEN
+        const jwts = jwt;
         const SECRET = process.env.FIRSTBEAT_SHARED_SECRET;
         const issuedAt = Date.now() / 1000;
         const payload = {
@@ -15,7 +20,6 @@ module.exports = {
 
         // default algorithm (HMAC SHA256)
 
-        const token = jwt.sign(payload, SECRET); 
+        const token = jwts.sign(payload, SECRET); 
         return token;
     }
-}
