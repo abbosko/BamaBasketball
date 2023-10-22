@@ -2,11 +2,13 @@ import { getDatabase, ref, set, get} from "firebase/database";
 import { initializeApp } from 'firebase/app';
 
 import * as dotenv from 'dotenv';
-import {genToken} from './genToken.js';
+import {genToken, genHawkinToken} from './genToken.js';
 
 dotenv.config()
 
 const token = genToken();
+
+const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
 
 // once we have app ready all this info is store in index.js (prob a way to do it now but idk)
 const firebaseConfig = {
@@ -45,13 +47,10 @@ function FBAthlete(fname, lname, email, id) {
 
 var kinBeginDate = '2023-10-10%2000%3A00%3A00';
 var kinEndDate = '2023-10-15%2000%3A00%3A00';
-var kinPlayerId = '81';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
 
-
-// have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
-/*const apiKinexonStats = () => {
-    fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions?min=', kinBeginDate, '&max=', kinEndDate, '&fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+async function getKinexonSessions(){
+    fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', kinBeginDate, '&max=', kinEndDate, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
@@ -61,6 +60,7 @@ const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,
         if (response.ok) { 
             return response.json();
         } else { 
+            console.log(response.json())
             throw new Error('API request failed'); 
         } 
     }) 
@@ -72,7 +72,56 @@ const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,
     });
 }
 
-apiKinexonStats();*/
+// have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
+async function getapiKinexonStats(kinPlayerId, session_id, session_date) {
+    /* 
+    once historical data entered use:
+     '/statistics/players/', kinPlayerId, '/sessions/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+   
+        */
+    fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions?min=', kinBeginDate, '&max=', kinEndDate, '&fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
+        },
+    }) 
+    .then(response => { 
+        if (response.ok) { 
+            return response.json();
+        } else { 
+            console.log(response.json())
+            throw new Error('API request failed'); 
+        } 
+    }) 
+    .then(data => {   
+        console.log(data);
+        set(ref(db, 'KinexonStats/' + session_id + '/'+ kinPlayerId), {
+            date: session_date,
+            accel_load_accum: data.accel_load_accum,
+            accel_load_accum_avg_per_minute: data.accel_load_accum_avg_per_minute,
+            distance_total: data.distance_total,
+            speed_max: data.speed_max,
+            jump_height_max: data.jump_height_max,
+            event_count_jump: data.event_count_jump,
+            event_count_change_of_orientation: data.event_count_change_of_orientation,
+        });
+
+    }) 
+    .catch(error => { 
+        console.error(error);
+    });
+}
+
+async function setKinexonStats(){
+    let sessions = await getKinexonSessions();
+
+    for(let i=0; i< sessions.length; i++){
+         for(let j=0; j< kinexon_players.length; j++){
+            let results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
+        }
+    }
+}
+getKinexonSessions();
 
 
 
@@ -121,7 +170,7 @@ async function setHawkins() {
         });
     }
 }
-setHawkins();
+//setHawkins();
 
 
 
