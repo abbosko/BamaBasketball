@@ -45,12 +45,12 @@ function FBAthlete(fname, lname, email, id) {
 }
 
 
-var kinBeginDate = '2023-10-10%2000%3A00%3A00';
-var kinEndDate = '2023-10-15%2000%3A00%3A00';
+var kinBeginDate = '2023-10-01%2000%3A00%3A00';
+var kinEndDate = '2023-10-05%2000%3A00%3A00';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
 
 async function getKinexonSessions(){
-    fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', kinBeginDate, '&max=', kinEndDate, '&apiKey=', process.env.KINEXON_API_KEY), {
+   return await fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', kinBeginDate, '&max=', kinEndDate, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
@@ -65,7 +65,8 @@ async function getKinexonSessions(){
         } 
     }) 
     .then(data => {   
-        console.log(data);
+        console.log(data)
+        return data
     }) 
     .catch(error => { 
         console.error(error);
@@ -74,12 +75,7 @@ async function getKinexonSessions(){
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
 async function getapiKinexonStats(kinPlayerId, session_id, session_date) {
-    /* 
-    once historical data entered use:
-     '/statistics/players/', kinPlayerId, '/sessions/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
-   
-        */
-    fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions?min=', kinBeginDate, '&max=', kinEndDate, '&fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+    fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
@@ -89,12 +85,12 @@ async function getapiKinexonStats(kinPlayerId, session_id, session_date) {
         if (response.ok) { 
             return response.json();
         } else { 
-            console.log(response.json())
+           
+            console.log(response.statusText)
             throw new Error('API request failed'); 
         } 
     }) 
     .then(data => {   
-        console.log(data);
         set(ref(db, 'KinexonStats/' + session_id + '/'+ kinPlayerId), {
             date: session_date,
             accel_load_accum: data.accel_load_accum,
@@ -114,14 +110,15 @@ async function getapiKinexonStats(kinPlayerId, session_id, session_date) {
 
 async function setKinexonStats(){
     let sessions = await getKinexonSessions();
-
     for(let i=0; i< sessions.length; i++){
          for(let j=0; j< kinexon_players.length; j++){
+
             let results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
         }
+        await sleep(7000);
     }
 }
-getKinexonSessions();
+
 
 
 
