@@ -44,13 +44,19 @@ function FBAthlete(fname, lname, email, id) {
     this.id = id;
 }
 
-
-var kinBeginDate = '2023-10-01%2000%3A00%3A00';
-var kinEndDate = '2023-10-05%2000%3A00%3A00';
+// loaded all data from jan 1 2023 - 10/22
+var kinBeginDate = '2023-01-01%2000%3A00%3A00';
+var kinEndDate = '2023-06-01%2000%3A00%3A00';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
+var last_kinexon_session = new Date().toISOString();
 
 async function getKinexonSessions(){
-   return await fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', kinBeginDate, '&max=', kinEndDate, '&apiKey=', process.env.KINEXON_API_KEY), {
+    var today = new Date().toISOString();
+    let datetime_array = last_kinexon_session.split('T');
+    let min_session_date = datetime_array[0].toISOString();
+    min_session_date = min_session_date + "T00:00:00Z";
+
+   return await fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
@@ -72,25 +78,32 @@ async function getKinexonSessions(){
         console.error(error);
     });
 }
+getKinexonSessions();
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
-async function getapiKinexonStats(kinPlayerId, session_id, session_date) {
-    fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+async function getapiKinexonStats(kinPlayerId, session_id) {
+    var data = 0
+    let response  = await fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
-        },
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
-        } else { 
-           
-            console.log(response.statusText)
+        }}); 
+   
+    if (response.ok) { 
+             data = await response.json();
+        } 
+    else { 
+           response.json().then(data => {console.log(data)});
+            console.log(data);
             throw new Error('API request failed'); 
         } 
-    }) 
-    .then(data => {   
+
+        return data;
+}
+    
+   async function processResults(data, session_id, kinPlayerId, session_date){
+        
+        console.log(data)
         set(ref(db, 'KinexonStats/' + session_id + '/'+ kinPlayerId), {
             date: session_date,
             accel_load_accum: data.accel_load_accum,
@@ -102,10 +115,6 @@ async function getapiKinexonStats(kinPlayerId, session_id, session_date) {
             event_count_change_of_orientation: data.event_count_change_of_orientation,
         });
 
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
 }
 
 async function setKinexonStats(){
@@ -114,10 +123,17 @@ async function setKinexonStats(){
          for(let j=0; j< kinexon_players.length; j++){
 
             let results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
+            if ( results.length == 0) {
+                console.log('No data for', kinexon_players[j] )
+                continue;
+            }
+           await processResults(results[0], sessions[i].session_id, kinexon_players[j],sessions[i].start_session);
+          
         }
-        await sleep(7000);
+     last_kinexon_session = sessions[i].start_session;
     }
 }
+
 
 
 
