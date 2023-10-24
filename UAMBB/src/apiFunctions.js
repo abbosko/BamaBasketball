@@ -1,6 +1,27 @@
 require('dotenv').config({path:"./.env"}); 
 const token = require('./genToken.js');
 
+/*import { initializeApp } from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
+import { getDatabase } from "firebase/database";
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
+    authDomain: "uambb-2def3.firebaseapp.com",
+    projectId: "uambb-2def3",
+    storageBucket: "uambb-2def3.appspot.com",
+    messagingSenderId: "210177408912",
+    appId: "1:210177408912:web:b608c7e17caa478eb27d15",
+    measurementId: "G-EYZBG3EE9B",
+    databaseURL: "https://uambb-2def3-default-rtdb.firebaseio.com/"
+  };
+  
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getDatabase(app);*/
 
 // !!!!!!! MOVE LATER !!!!!!!!
 // Firstbeat athlete object
@@ -12,14 +33,15 @@ function FBAthlete(fname, lname, email, id) {
 }
 
 
-var kinBeginDate = '2023-10-10%2000%3A00%3A00';
-var kinEndDate = '2023-10-15%2000%3A00%3A00';
+/*var kinBeginDate = '2023-10-10 00:00:00';
+var kinEndDate = '2023-10-15 00:00:00';
 var kinPlayerId = '81';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
 
 
-// have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
-/*const apiKinexonStats = () => {
+// loop through each player & each date? -> long
+// date is easy for daily stuff but how do historical stuff
+const apiKinexonStats = () => {
     fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions?min=', kinBeginDate, '&max=', kinEndDate, '&fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
@@ -39,7 +61,7 @@ const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,
     .catch(error => { 
         console.error(error);
     });
-}
+} 
 
 apiKinexonStats();*/
 
@@ -49,6 +71,7 @@ apiKinexonStats();*/
 * Hawkins API calls! :)
 */
 
+// struct for storing hawkins stats for each session
 function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePhase, prpp, brakePwr, brakeNetImp, propNetImp, LRBrakeForce) {
     this.timestamp = timestamp;
     this.athleteId = athleteId;
@@ -67,7 +90,7 @@ function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePh
 const apiHawkinsStats = async () => {
     let hawkStructArray = [];
 
-    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=1685595600'), {
+    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=1697605200'), {
         headers: {
             Authorization: 'Bearer ' + await token.genHawkinToken()
         }
@@ -85,14 +108,39 @@ const apiHawkinsStats = async () => {
 async function setHawkins() {
     let stats = await apiHawkinsStats();
     for(let i = 0; i < stats.length; i++) {
-        set(ref(db, 'HawkinStats/' + timestamp), {
-            // values here
-        });
+        var d = new Date(0);
+        d.setUTCSeconds(stats[i].timestamp);
+        d_array = d.toISOString().split('T');                      // d_array[0] = date, d_array[1] = time
+        /*set(ref(db, 'HawkinStats/' + stats[i].timestamp), {
+            date : d_array[0],
+            time : d_array[1],
+            player_id : stats[i].athleteId,
+            jumpHeight : stats[i].jumpHeight,
+            mRSI : stats[i].mRSI,
+            timeTakeoff : stats[i].timeTakeoff,
+            brakePhase : stats[i].brakePhase,
+            prpp : stats[i].prpp,
+            brakePwr : stats[i].brakePwr,
+            brakeNetImp : stats[i].brakeNetImp,
+            propNetImp : stats[i].propNetImp,
+            LRBrakeForce : stats[i].LRBrakeForce
+        });*/
+        console.log(stats[i].timestamp);
+        console.log(d_array[0]);
+        console.log(d_array[1]);
+        console.log(stats[i].athleteId);
+        console.log(stats[i].jumpHeight);
+        console.log(stats[i].mRSI);
+        console.log(stats[i].timeTakeoff);
+        console.log(stats[i].brakePhase);
+        console.log(stats[i].prpp);
+        console.log(stats[i].brakePwr);
+        console.log(stats[i].brakeNetImp);
+        console.log(stats[i].propNetImp);
+        console.log(stats[i].LRBrakeForce);
     }
 }
 setHawkins();
-
-
 
 /*
 * Firstbeat API calls! :)
