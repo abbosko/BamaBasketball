@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
+import { getDatabase, ref, set, get, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
 
 import * as dotenv from 'dotenv';
@@ -188,8 +188,10 @@ const apiHawkinsStats = async (datetime) => {
     return hawkStructArray;
 }
 
-async function setHawkins(datetime) {
-    let stats = await apiHawkinsStats(datetime);
+async function setHawkins() {
+    var yesterday = Math.floor((Date.now() - 86400000) / 1000);         // get epoch timestamp from 24 hours ago (in seconds)
+
+    let stats = await apiHawkinsStats(yesterday);
     for(let i = 0; i < stats.length; i++) {
         var d = new Date(0);
         d.setUTCSeconds(stats[i].timestamp);
@@ -224,9 +226,7 @@ async function setHawkins(datetime) {
     }
 }
 
-//DO DATETIME FROM YESTERDAY AT MIDNIGHT HERE & PASS
 //setHawkins();
-
 
 
 /*
