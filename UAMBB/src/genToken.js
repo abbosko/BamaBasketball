@@ -1,10 +1,15 @@
 'use strict';
-require('dotenv').config({path:"./.env"}); 
+import * as dotenv from 'dotenv';
+import jwt from 'jsonwebtoken'
+// import { sign, decode, verify } from 'jsonwebtoken'
 
-module.exports = {
-    //npm install jsonwebtoken
-    genFbToken: function() {                    // FIRSTBEAT TOKEN
-        const jwt = require('jsonwebtoken');
+
+dotenv.config()
+
+//npm install jsonwebtoken
+
+export function genToken() {                    // FIRSTBEAT TOKEN
+        const jwts = jwt;
         const SECRET = process.env.FIRSTBEAT_SHARED_SECRET;
         const issuedAt = Date.now() / 1000;
         const payload = {
@@ -15,11 +20,10 @@ module.exports = {
 
         // default algorithm (HMAC SHA256)
 
-        const token = jwt.sign(payload, SECRET); 
+        const token = jwts.sign(payload, SECRET); 
         return token;
-    },
-
-    genHawkinToken: async function() {          // HAWKIN TOKEN
+    }
+export async function genHawkinToken() {          // HAWKIN TOKEN
         let hawkinTokenData = await fetch(('https://cloud.hawkindynamics.com/api/token'), {
             headers: {
                 Authorization: 'Bearer ' + process.env.HAWKINS_REFRESH_TOKEN
@@ -29,5 +33,3 @@ module.exports = {
         let hawkinTokenResponse = await hawkinTokenData.json();
         return hawkinTokenResponse.access_token; 
     }  
-}
-

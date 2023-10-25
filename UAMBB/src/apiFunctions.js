@@ -1,12 +1,16 @@
-require('dotenv').config({path:"./.env"}); 
-const token = require('./genToken.js');
+import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
+import { initializeApp } from 'firebase/app';
 
-/*import { initializeApp } from 'firebase/app';
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase } from "firebase/database";
+import * as dotenv from 'dotenv';
+import {genToken, genHawkinToken} from './genToken.js';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+dotenv.config()
+
+const token = genToken();
+
+const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
+
+// once we have app ready all this info is store in index.js (prob a way to do it now but idk)
 const firebaseConfig = {
     apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
     authDomain: "uambb-2def3.firebaseapp.com",
@@ -19,9 +23,18 @@ const firebaseConfig = {
   };
   
   // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const db = getDatabase(app);*/
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/*
+class FirstbeatPlayerSession{
+  constructor(trimp, engConsumption, playerStatusScore){
+      this.trimp = trimp;
+      this.engConsumption = engConsumption;
+      this.playerStatusScore = playerStatusScore;
+
+  }
+}
 
 // !!!!!!! MOVE LATER !!!!!!!!
 // Firstbeat athlete object
@@ -32,17 +45,19 @@ function FBAthlete(fname, lname, email, id) {
     this.id = id;
 }
 
-
-/*var kinBeginDate = '2023-10-10 00:00:00';
-var kinEndDate = '2023-10-15 00:00:00';
-var kinPlayerId = '81';
+// loaded all data from jan 1 2023 - 10/22
+var kinBeginDate = '2023-01-01%2000%3A00%3A00';
+var kinEndDate = '2023-06-01%2000%3A00%3A00';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
+var last_kinexon_session = new Date().toISOString();
 
+async function getKinexonSessions(){
+    var today = new Date().toISOString();
+    let datetime_array = last_kinexon_session.split('T');
+    let min_session_date = datetime_array[0].toISOString();
+    min_session_date = min_session_date + "T00:00:00Z";
 
-// loop through each player & each date? -> long
-// date is easy for daily stuff but how do historical stuff
-const apiKinexonStats = () => {
-    fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/sessions?min=', kinBeginDate, '&max=', kinEndDate, '&fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+   return await fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
@@ -52,18 +67,75 @@ const apiKinexonStats = () => {
         if (response.ok) { 
             return response.json();
         } else { 
+            console.log(response.json())
             throw new Error('API request failed'); 
         } 
     }) 
     .then(data => {   
-        console.log(data);
+        console.log(data)
+        return data
     }) 
     .catch(error => { 
         console.error(error);
     });
-} 
+}
+//getKinexonSessions();
 
-apiKinexonStats();*/
+// have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
+async function getapiKinexonStats(kinPlayerId, session_id) {
+    var data = 0
+    let response  = await fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
+        }}); 
+   
+    if (response.ok) { 
+             data = await response.json();
+        } 
+    else { 
+           response.json().then(data => {console.log(data)});
+            console.log(data);
+            throw new Error('API request failed'); 
+        } 
+
+        return data;
+}
+    
+   async function processResults(data, session_id, kinPlayerId, session_date){
+        
+        console.log(data)
+        set(ref(db, 'KinexonStats/' + session_id + '/'+ kinPlayerId), {
+            date: session_date,
+            accel_load_accum: data.accel_load_accum,
+            accel_load_accum_avg_per_minute: data.accel_load_accum_avg_per_minute,
+            distance_total: data.distance_total,
+            speed_max: data.speed_max,
+            jump_height_max: data.jump_height_max,
+            event_count_jump: data.event_count_jump,
+            event_count_change_of_orientation: data.event_count_change_of_orientation,
+        });
+
+}
+
+async function setKinexonStats(){
+    let sessions = await getKinexonSessions();
+    for(let i=0; i< sessions.length; i++){
+         for(let j=0; j< kinexon_players.length; j++){
+
+            let results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
+            if ( results.length == 0) {
+                console.log('No data for', kinexon_players[j] )
+                continue;
+            }
+           await processResults(results[0], sessions[i].session_id, kinexon_players[j],sessions[i].start_session);
+          
+        }
+     last_kinexon_session = sessions[i].start_session;
+    }
+}
+*/
+
 
 
 
@@ -71,7 +143,18 @@ apiKinexonStats();*/
 * Hawkins API calls! :)
 */
 
-// struct for storing hawkins stats for each session
+var last_hawkin_session;
+/*const test = query(ref(db,'HawkinStats'), limitToLast(1));
+get(test).then((snapshot) => {
+  if (snapshot.exists()) {
+    console.log(snapshot.val());
+  } else {
+    console.log("No data available");
+  }
+}).catch((error) => {
+  console.error(error);
+});*/
+
 function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePhase, prpp, brakePwr, brakeNetImp, propNetImp, LRBrakeForce) {
     this.timestamp = timestamp;
     this.athleteId = athleteId;
@@ -87,10 +170,10 @@ function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePh
 }
 
 // gets all data starting from June 1, 2023 @ midnight: 1685595600
-const apiHawkinsStats = async () => {
+const apiHawkinsStats = async (datetime) => {
     let hawkStructArray = [];
 
-    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=1697605200'), {
+    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=', datetime), {
         headers: {
             Authorization: 'Bearer ' + await token.genHawkinToken()
         }
@@ -105,13 +188,26 @@ const apiHawkinsStats = async () => {
     return hawkStructArray;
 }
 
-async function setHawkins() {
-    let stats = await apiHawkinsStats();
+async function setHawkins(datetime) {
+    let stats = await apiHawkinsStats(datetime);
     for(let i = 0; i < stats.length; i++) {
         var d = new Date(0);
         d.setUTCSeconds(stats[i].timestamp);
-        d_array = d.toISOString().split('T');                      // d_array[0] = date, d_array[1] = time
-        /*set(ref(db, 'HawkinStats/' + stats[i].timestamp), {
+        var d_array = d.toISOString().split('T');                       // d_array[0] = date, d_array[1] = time
+
+        // fix any null vals
+        if(stats[i].athleteId == undefined) stats[i].athleteId = null;
+        if(stats[i].jumpHeight == undefined) stats[i].jumpHeight = null;
+        if(stats[i].mRSI == undefined) stats[i].mRSI = null;
+        if(stats[i].timeTakeoff == undefined) stats[i].timeTakeoff = null;
+        if(stats[i].brakePhase == undefined) stats[i].brakePhase = null;
+        if(stats[i].prpp == undefined) stats[i].prpp = null;
+        if(stats[i].brakePwr == undefined) stats[i].brakePwr = null;
+        if(stats[i].brakeNetImp == undefined) stats[i].brakeNetImp = null;
+        if(stats[i].propNetImp == undefined) stats[i].propNetImp = null;
+        if(stats[i].LRBrakeForce == undefined) stats[i].LRBrakeForce = null;
+
+        set(ref(db, 'HawkinStats/' + d_array[0] + '/' + stats[i].timestamp), {
             date : d_array[0],
             time : d_array[1],
             player_id : stats[i].athleteId,
@@ -124,28 +220,20 @@ async function setHawkins() {
             brakeNetImp : stats[i].brakeNetImp,
             propNetImp : stats[i].propNetImp,
             LRBrakeForce : stats[i].LRBrakeForce
-        });*/
-        console.log(stats[i].timestamp);
-        console.log(d_array[0]);
-        console.log(d_array[1]);
-        console.log(stats[i].athleteId);
-        console.log(stats[i].jumpHeight);
-        console.log(stats[i].mRSI);
-        console.log(stats[i].timeTakeoff);
-        console.log(stats[i].brakePhase);
-        console.log(stats[i].prpp);
-        console.log(stats[i].brakePwr);
-        console.log(stats[i].brakeNetImp);
-        console.log(stats[i].propNetImp);
-        console.log(stats[i].LRBrakeForce);
+        });
     }
 }
-setHawkins();
+
+//DO DATETIME FROM YESTERDAY AT MIDNIGHT HERE & PASS
+//setHawkins();
+
+
 
 /*
 * Firstbeat API calls! :)
 */
-let fbAuth = 'Bearer ' + token.genFbToken();                // generates authorization token
+/*
+let fbAuth = 'Bearer ' + token;                // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
 
@@ -174,88 +262,108 @@ const apiFirstBeatAthletes = () => {
     });
 }
 
-// did this to get team id, do we need groups??
-/*const apiFirstBeatTeam = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/teams'), {  // add team to url
-        headers: {
-            Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
-        }
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
-        } else { 
-            throw new Error('API request failed'); 
-        } 
-    }) 
-    .then(data => {
-        for(let i = 0; i < 3; i++) {
-           console.log(data.teams[0].groups[i]);
-        }      
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
-}*/
+//gets sessions going back to last session date
+async function  apiFirstBeatSessions(last_session_date) {
+    var data;
 
-//gets sessions going back to June 1st, 2022; store this data somewhere
-const apiFirstBeatSessions = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions'), {  // add teams/{teamId}/sessions to url
+    let datetime_array = last_session_date.split('T');
+    let session_date = datetime_array[0];
+
+   const response = await fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
         headers: {
             Authorization: fbAuth,
             "X-Api-Key": process.env.FIRSTBEAT_API_KEY
         }
-    }) 
-    .then(response => { 
+    });
         if (response.ok) { 
-            return response.json();
+             data = await response.json()
+         
         } else { 
             throw new Error('API request failed'); 
         } 
-    }) 
-    .then(data => {
-        for(let i = 0; i < 5; i++) {    // get last 5 sessions
-            console.log(data.sessions[data.sessions.length - 1 - i]);
-        }     
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
+        return  data.sessions;
+
 }
 
-// results for indiv session, session # for Oct 14th, 2023 is hard coded rn for an example
-const apiFirstBeatSessionResults = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/725121/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
+// results for indiv session
+async function apiFirstBeatSessionResults(sessionID) {
+    var data;
+
+    const token = genToken();
+    let fbAuth = 'Bearer ' + token; 
+
+   const response = await fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/', sessionID, '/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
         headers: {
             Authorization: fbAuth,
             "X-Api-Key": process.env.FIRSTBEAT_API_KEY
         }
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
-        } else { 
+    });
+
+    if (response.ok) { 
+        data = await response.json(); } 
+    else { 
+            console.log("ERROR: " + response.status);
             throw new Error('API request failed'); 
         } 
-    }) 
-    .then(data => {             // have to do it this way bc variables array switches around every time i call for some reason
-        
 
+    return data;
+
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function processFBsession(data, sessionID){
+
+    data = await Promise.resolve(data); // i think this can be deleted idk
+    if (data.measurements == null){     // retry if getting {message: Accepted} -- mostly for historical data load, prob could delete
+        console.log ("sleep 10 seconds");
+        await sleep(10000);
+        data = await  apiFirstBeatSessionResults(sessionID)
+    }
+  
         for(let i = 0; i < data.measurements.length; i++) {
-            for(let j = 0; j < data.measurements[i].variables.length; j++) {
-                if(data.measurements[i].variables[j].name == 'trimp') console.log(data.measurements[i].variables[j].name, ' = ', data.measurements[i].variables[j].value);
-                if(data.measurements[i].variables[j].name == 'energyConsumptionTotal') console.log(data.measurements[i].variables[j].name, ' = ', data.measurements[i].variables[j].value);
-                if(data.measurements[i].variables[j].name == 'playerStatusScore') console.log(data.measurements[i].variables[j].name, ' = ', data.measurements[i].variables[j].value, '\n');
-            }
-        }
-        
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
-}
+            let session = new FirstbeatPlayerSession(0,0,0);
+            session.athlete_id = data.measurements[i].athleteId;
+            let datetime_array = data.measurements[i].startTime.split('T');
+            let session_date = datetime_array[0];
+            session.sessionID = data.measurements[i].sessionId;
+            session.session_date = session_date;
 
+        
+            for(let j = 0; j < data.measurements[i].variables.length; j++) {
+                if(data.measurements[i].variables[j].name == 'trimp') session.trimp = data.measurements[i].variables[j].value;
+                if(data.measurements[i].variables[j].name == 'energyConsumptionTotal') session.engConsumption =  data.measurements[i].variables[j].value;
+                if(data.measurements[i].variables[j].name == 'playerStatusScore') session.playerStatusScore = data.measurements[i].variables[j].value;
+
+            }
+            set(ref(db, 'FirstbeatStats/' + session.sessionID + '/'+ session.athlete_id), {
+                date: session_date,
+                trimp : session.trimp,
+                energyConsumptionTotal: session.engConsumption,
+                playerStatusScore: session.playerStatusScore,
+            });
+        }
+    }
+    
+var last_session_date = new Date();     // Keeping Last session date in memory to reload from this time
+last_session_date.setDate(last_session_date.getDate() - 1);
+last_session_date = last_session_date.toISOString()
+
+
+// this is the function to call to grab fb data from api and set in db
+async function setFirstBeatSessions(){
+  let  sessions = await apiFirstBeatSessions(last_session_date);
+ 
+   for(let i=0; i < sessions.length; i++){
+      let session_id = sessions[i].sessionId;
+        let response = await apiFirstBeatSessionResults(session_id);
+        processFBsession(response, session_id);
+        last_session_date = sessions[i].endTime;
+        }
+   }
 
 
 //apiFirstBeatSessions();
+*/
