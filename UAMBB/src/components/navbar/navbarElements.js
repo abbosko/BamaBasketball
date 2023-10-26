@@ -5,7 +5,7 @@ import { NavLink as Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const Nav = styled.nav`
-	background: #63d471;
+	background: linear-gradient(180deg, rgb(145, 1, 18) 0%, rgba(217, 217, 217, 0) 100%);
 	height: 85px;
 	display: flex;
 	justify-content: space-between;
@@ -16,7 +16,7 @@ export const Nav = styled.nav`
 `;
 
 export const NavLink = styled(Link)`
-	color: #808080;
+	color: #0a0a0a;
 	display: flex;
 	align-items: center;
 	text-decoration: none;
