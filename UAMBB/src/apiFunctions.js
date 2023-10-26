@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, get} from "firebase/database";
+import { getDatabase, ref, set, get, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
 
 import * as dotenv from 'dotenv';
@@ -26,6 +26,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+/*
 class FirstbeatPlayerSession{
   constructor(trimp, engConsumption, playerStatusScore){
       this.trimp = trimp;
@@ -78,7 +79,7 @@ async function getKinexonSessions(){
         console.error(error);
     });
 }
-getKinexonSessions();
+//getKinexonSessions();
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
 async function getapiKinexonStats(kinPlayerId, session_id) {
@@ -133,7 +134,7 @@ async function setKinexonStats(){
      last_kinexon_session = sessions[i].start_session;
     }
 }
-
+*/
 
 
 
@@ -141,6 +142,18 @@ async function setKinexonStats(){
 /*
 * Hawkins API calls! :)
 */
+
+var last_hawkin_session;
+/*const test = query(ref(db,'HawkinStats'), limitToLast(1));
+get(test).then((snapshot) => {
+  if (snapshot.exists()) {
+    console.log(snapshot.val());
+  } else {
+    console.log("No data available");
+  }
+}).catch((error) => {
+  console.error(error);
+});*/
 
 function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePhase, prpp, brakePwr, brakeNetImp, propNetImp, LRBrakeForce) {
     this.timestamp = timestamp;
@@ -157,10 +170,10 @@ function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePh
 }
 
 // gets all data starting from June 1, 2023 @ midnight: 1685595600
-const apiHawkinsStats = async () => {
+const apiHawkinsStats = async (datetime) => {
     let hawkStructArray = [];
 
-    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=1685595600'), {
+    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=', datetime), {
         headers: {
             Authorization: 'Bearer ' + await token.genHawkinToken()
         }
@@ -176,20 +189,50 @@ const apiHawkinsStats = async () => {
 }
 
 async function setHawkins() {
-    let stats = await apiHawkinsStats();
+    var yesterday = Math.floor((Date.now() - 86400000) / 1000);         // get epoch timestamp from 24 hours ago (in seconds)
+
+    let stats = await apiHawkinsStats(yesterday);
     for(let i = 0; i < stats.length; i++) {
-        set(ref(db, 'HawkinStats/' + timestamp), {
-            // values here
+        var d = new Date(0);
+        d.setUTCSeconds(stats[i].timestamp);
+        var d_array = d.toISOString().split('T');                       // d_array[0] = date, d_array[1] = time
+
+        // fix any null vals
+        if(stats[i].athleteId == undefined) stats[i].athleteId = null;
+        if(stats[i].jumpHeight == undefined) stats[i].jumpHeight = null;
+        if(stats[i].mRSI == undefined) stats[i].mRSI = null;
+        if(stats[i].timeTakeoff == undefined) stats[i].timeTakeoff = null;
+        if(stats[i].brakePhase == undefined) stats[i].brakePhase = null;
+        if(stats[i].prpp == undefined) stats[i].prpp = null;
+        if(stats[i].brakePwr == undefined) stats[i].brakePwr = null;
+        if(stats[i].brakeNetImp == undefined) stats[i].brakeNetImp = null;
+        if(stats[i].propNetImp == undefined) stats[i].propNetImp = null;
+        if(stats[i].LRBrakeForce == undefined) stats[i].LRBrakeForce = null;
+
+        set(ref(db, 'HawkinStats/' + d_array[0] + '/' + stats[i].timestamp), {
+            date : d_array[0],
+            time : d_array[1],
+            player_id : stats[i].athleteId,
+            jumpHeight : stats[i].jumpHeight,
+            mRSI : stats[i].mRSI,
+            timeTakeoff : stats[i].timeTakeoff,
+            brakePhase : stats[i].brakePhase,
+            prpp : stats[i].prpp,
+            brakePwr : stats[i].brakePwr,
+            brakeNetImp : stats[i].brakeNetImp,
+            propNetImp : stats[i].propNetImp,
+            LRBrakeForce : stats[i].LRBrakeForce
         });
     }
 }
-//setHawkins();
 
+//setHawkins();
 
 
 /*
 * Firstbeat API calls! :)
 */
+/*
 let fbAuth = 'Bearer ' + token;                // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
@@ -218,31 +261,6 @@ const apiFirstBeatAthletes = () => {
         console.error(error);
     });
 }
-
-// did this to get team id, do we need groups??
-/*const apiFirstBeatTeam = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/teams'), {  // add team to url
-        headers: {
-            Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
-        }
-    }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
-        } else { 
-            throw new Error('API request failed'); 
-        } 
-    }) 
-    .then(data => {
-        for(let i = 0; i < 3; i++) {
-           console.log(data.teams[0].groups[i]);
-        }      
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
-}*/
 
 //gets sessions going back to last session date
 async function  apiFirstBeatSessions(last_session_date) {
@@ -348,3 +366,4 @@ async function setFirstBeatSessions(){
 
 
 //apiFirstBeatSessions();
+*/
