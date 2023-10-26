@@ -6,8 +6,6 @@ import {
 	NavLink,
 	Bars,
 	NavMenu,
-	NavBtn,
-	NavBtnLink,
 } from "./navbarElements.js";
 
 const Navbar = () => {
@@ -17,24 +15,18 @@ const Navbar = () => {
 				<Bars />
 
 				<NavMenu>
-					<NavLink to="/home" >
+					<NavLink to="/home" activeStyle>
 						Home
-					</NavLink>
-					<NavLink to="/teamlocker" activeStyle>
-						Team Locker
 					</NavLink>
 					<NavLink to="/playerlocker" activeStyle>
 						Player Locker
 					</NavLink>
-				
+					<NavLink to="/teamlocker" activeStyle>
+						Team Locker
+					</NavLink>
 					{/* Second Nav */}
 					{/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
 				</NavMenu>
-				<NavBtn>
-					<NavBtnLink to="/signin">
-						Sign In
-					</NavBtnLink>
-				</NavBtn>
 			</Nav>
 		</>
 	);

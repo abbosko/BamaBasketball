@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.css";
 
-export const teamLocker = () => {
+export const TeamLocker = () => {
   return (
     <div className="teamLocker">
       <div className="div">
@@ -359,3 +359,4 @@ export const teamLocker = () => {
     </div>
   );
 };
+export default TeamLocker;

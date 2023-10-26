@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.css";
 
-export const playerLocker = () => {
+export const PlayerLocker = () => {
   return (
     <div className="playerLocker">
       <div className="div">
@@ -306,3 +306,4 @@ export const playerLocker = () => {
     </div>
   );
 };
+export default PlayerLocker;
