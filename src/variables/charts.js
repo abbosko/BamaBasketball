@@ -81,18 +81,13 @@ let chartExample1 = {
 
     return {
       labels: [
-        "JAN",
-        "FEB",
-        "MAR",
-        "APR",
-        "MAY",
-        "JUN",
-        "JUL",
-        "AUG",
-        "SEP",
-        "OCT",
-        "NOV",
-        "DEC",
+        "MON",
+        "TUES",
+        "WED",
+        "THURS",
+        "FRI",
+        "SAT",
+        "SUN",
       ],
       datasets: [
         {
