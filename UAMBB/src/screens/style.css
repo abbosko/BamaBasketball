@@ -41,7 +41,7 @@
   }
   
   .index .text-wrapper {
-    -webkit-text-stroke: 1px #231f20;
+    -webkit-text-stroke: 1px #19ff52;
     border-color: var(--black);
     color: var(--crimson);
     font-family: "Inter", Helvetica;
@@ -57,7 +57,7 @@
   }
   
   .index .text-wrapper-2 {
-    color: #ffffff;
+    color: #231f20;
     font-family: "Inter", Helvetica;
     font-size: 32px;
     font-weight: 500;
@@ -226,7 +226,7 @@
   }
   
   .index .grant-nelson {
-    color: #000000;
+    color: #02ff6b;
     font-family: "Inter", Helvetica;
     font-size: 24px;
     font-weight: 400;
