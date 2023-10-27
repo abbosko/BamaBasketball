@@ -23,6 +23,8 @@ import Rtl from "views/Rtl.js";
 import TableList from "views/TableList.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
+import Players from "views/Players.js"
+import Team from "views/Team.js"
 
 var routes = [
   {
@@ -88,6 +90,22 @@ var routes = [
     icon: "tim-icons icon-world",
     component: <Rtl />,
     layout: "/rtl",
+  },
+  {
+    path: "/players",
+    name: "Players",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-chart-pie-36",
+    component: <Players />,
+    layout: "/admin",
+  },
+  {
+    path: "/team",
+    name: "Team",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-chart-pie-36",
+    component: <Team />,
+    layout: "/admin",
   },
 ];
 export default routes;
