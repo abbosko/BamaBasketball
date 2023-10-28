@@ -1,16 +1,8 @@
-import { getDatabase, ref, set, get, query, limitToLast} from "firebase/database";
+import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
 
 import * as dotenv from 'dotenv';
 import {genToken, genHawkinToken} from './genToken.js';
-
-dotenv.config()
-
-const token = genToken();
-
-const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
-
-// once we have app ready all this info is store in index.js (prob a way to do it now but idk)
 const firebaseConfig = {
     apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
     authDomain: "uambb-2def3.firebaseapp.com",
@@ -23,8 +15,34 @@ const firebaseConfig = {
   };
   
   // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  
+const db = getDatabase();
+
+dotenv.config()
+
+//const token = genToken();
+
+const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
+
+async function getPlayers(){
+const playerRef = ref(db, 'Players');
+let snapshot = await get(playerRef);
+
+if (snapshot.exists()) {
+        let snap  = await snapshot.val();
+        return snap;
+        // console.log(snapshot.val());
+      } else {
+        console.log("No data available");
+      }
+      
+}
+
+export async function getPlayerWrap(){
+let data = await getPlayers();
+return Object.values( data);
+}
 
 /*
 class FirstbeatPlayerSession{
@@ -170,6 +188,7 @@ function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePh
 }
 
 // gets all data starting from June 1, 2023 @ midnight: 1685595600
+/*
 const apiHawkinsStats = async (datetime) => {
     let hawkStructArray = [];
 

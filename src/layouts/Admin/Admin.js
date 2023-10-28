@@ -28,7 +28,7 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
 import routes from "routes.js";
 
-import { BackgroundColorContext } from "contexts/BackgroundColorContext";
+import { BackgroundColorContext } from "contexts/BackgroundColorContext.js";
 
 var ps;
 
