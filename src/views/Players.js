@@ -71,8 +71,7 @@ function Players() {
                 <Table className="tablesorter" responsive>
                   <thead className="text-primary">
                     <tr>
-                      <th>First Name</th>
-                      <th>Last Name</th>
+                      <th>Athelte</th>
                       <th>Number</th>
                       <th>Dashboard</th>
                     </tr>
@@ -81,8 +80,7 @@ function Players() {
                     {Object.values(playerList).map((val, key) => {
                     return (
                         <tr>
-                            <td>{val.fname}</td>
-                            <td>{val.lname}</td>
+                            <td>{val.fname} {val.lname}</td>
                             <td>{val.number}</td>
                             <td><Link to="/Dashboard"> Dashboard </Link></td>
                         </tr>
