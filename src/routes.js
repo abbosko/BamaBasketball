@@ -22,6 +22,7 @@ import TableList from "views/TableList.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
 import Players from "views/Players.js"
+import PlayerPage from "views/PlayerDashboard.js"
 import Team from "views/Team.js"
 
 var routes = [

@@ -29,6 +29,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper.js";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper.js";
+import PlayerDashboard from "views/PlayerDashboard.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
@@ -54,6 +55,10 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path="/admin/*" element={<AdminLayout />} />
+          <Route
+            path="/playerdashboard/:num"
+            element={<PlayerDashboard />}
+          />
           <Route
             path="*"
             element={<Navigate to="/admin/dashboard" replace />}
