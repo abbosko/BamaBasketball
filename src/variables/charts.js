@@ -81,17 +81,22 @@ let chartExample1 = {
 
     return {
       labels: [
-        "MON",
-        "TUES",
-        "WED",
-        "THURS",
-        "FRI",
-        "SAT",
-        "SUN",
+        "JAN",
+        "FEB",
+        "MAR",
+        "APR",
+        "MAY",
+        "JUN",
+        "JUL",
+        "AUG",
+        "SEP",
+        "OCT",
+        "NOV",
+        "DEC",
       ],
       datasets: [
         {
-          label: "My First dataset",
+          label: "Trimp",
           fill: true,
           backgroundColor: gradientStroke,
           borderColor: "#1f8ef1",
@@ -121,22 +126,15 @@ let chartExample1 = {
 
     return {
       labels: [
-        "JAN",
-        "FEB",
-        "MAR",
-        "APR",
-        "MAY",
-        "JUN",
-        "JUL",
-        "AUG",
-        "SEP",
-        "OCT",
-        "NOV",
-        "DEC",
+        "4 wks ago",
+        "3 wks ago",
+        "2 wks ago",
+        "1 wk ago",
+        "This wk",
       ],
       datasets: [
         {
-          label: "My First dataset",
+          label: "Trimp",
           fill: true,
           backgroundColor: gradientStroke,
           borderColor: "#1f8ef1",
@@ -150,7 +148,7 @@ let chartExample1 = {
           pointHoverRadius: 4,
           pointHoverBorderWidth: 15,
           pointRadius: 4,
-          data: [80, 120, 105, 110, 95, 105, 90, 100, 80, 95, 70, 120],
+          data: [80, 120, 105, 110, 95, 105],
         },
       ],
     };
@@ -166,22 +164,17 @@ let chartExample1 = {
 
     return {
       labels: [
-        "JAN",
-        "FEB",
-        "MAR",
-        "APR",
-        "MAY",
-        "JUN",
-        "JUL",
-        "AUG",
-        "SEP",
-        "OCT",
-        "NOV",
-        "DEC",
+        "MON",
+        "TUES",
+        "WED",
+        "THURS",
+        "FRI",
+        "SAT",
+        "SUN",
       ],
       datasets: [
         {
-          label: "My First dataset",
+          label: "Trimp",
           fill: true,
           backgroundColor: gradientStroke,
           borderColor: "#1f8ef1",
@@ -195,7 +188,7 @@ let chartExample1 = {
           pointHoverRadius: 4,
           pointHoverBorderWidth: 15,
           pointRadius: 4,
-          data: [60, 80, 65, 130, 80, 105, 90, 130, 70, 115, 60, 130],
+          data: [60, 80, 65, 130, 80, 105, 90],
         },
       ],
     };
@@ -220,7 +213,7 @@ let chartExample2 = {
       labels: ["JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
       datasets: [
         {
-          label: "Data",
+          label: "Status",
           fill: true,
           backgroundColor: gradientStroke,
           borderColor: "#1f8ef1",
@@ -256,10 +249,10 @@ let chartExample3 = {
     gradientStroke.addColorStop(0, "rgba(119,52,169,0)"); //purple colors
 
     return {
-      labels: ["USA", "GER", "AUS", "UK", "RO", "BR"],
+      labels: ["MON", "TUES", "WED", "THURS", "FRI", "SAT", "SUN"],
       datasets: [
         {
-          label: "Countries",
+          label: "mRSI",
           fill: true,
           backgroundColor: gradientStroke,
           hoverBackgroundColor: gradientStroke,
@@ -267,7 +260,7 @@ let chartExample3 = {
           borderWidth: 2,
           borderDash: [],
           borderDashOffset: 0.0,
-          data: [53, 20, 10, 80, 100, 45],
+          data: [0.53, 0.20, 0.10, 0.80, 1.00, 0.45, 0.50],
         },
       ],
     };
@@ -331,10 +324,10 @@ const chartExample4 = {
     gradientStroke.addColorStop(0, "rgba(66,134,121,0)"); //green colors
 
     return {
-      labels: ["JUL", "AUG", "SEP", "OCT", "NOV"],
+      labels: ["MON", "TUES", "WED", "THURS", "FRI", "SAT", "SUN"],
       datasets: [
         {
-          label: "My First dataset",
+          label: "Height",
           fill: true,
           backgroundColor: gradientStroke,
           borderColor: "#00d6b4",
@@ -348,7 +341,7 @@ const chartExample4 = {
           pointHoverRadius: 4,
           pointHoverBorderWidth: 15,
           pointRadius: 4,
-          data: [90, 27, 60, 12, 80],
+          data: [12, 15, 18, 16, 13, 19, 17],
         },
       ],
     };
