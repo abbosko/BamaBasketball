@@ -56,10 +56,6 @@ root.render(
         <Routes>
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route
-            path="/playerdashboard/:num"
-            element={<PlayerDashboard />}
-          />
-          <Route
             path="*"
             element={<Navigate to="/admin/dashboard" replace />}
           />

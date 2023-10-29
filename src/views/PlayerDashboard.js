@@ -1,3 +1,20 @@
+/*!
+
+=========================================================
+* Black Dashboard React v1.2.2
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/black-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://github.com/creativetimofficial/black-dashboard-react/blob/master/LICENSE.md)
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+*/
 import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
@@ -33,13 +50,14 @@ import {
   chartExample4,
 } from "variables/charts.js";
 
-function PlayerDashboard(props) {
+function PlayerDashboard(player) {
   const [bigChartData, setbigChartData] = React.useState("data1");
   const setBgChartData = (name) => {
     setbigChartData(name);
   };
   return (
     <>
+    <h1>{player.fname}</h1>
       <div className="content">
         <Row>
           <Col xs="12">
@@ -47,8 +65,8 @@ function PlayerDashboard(props) {
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
-                    <h5 className="card-category">Total Shipments</h5>
-                    <CardTitle tag="h2">Performance</CardTitle>
+                    <h5 className="card-category">Total Jump</h5>
+                  <CardTitle tag="h2">Performance</CardTitle>
                   </Col>
                   <Col sm="6">
                     <ButtonGroup
@@ -143,7 +161,7 @@ function PlayerDashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Daily Sales</h5>
+                <h5 className="card-category">Daily</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-delivery-fast text-primary" />{" "}
                   3,500€

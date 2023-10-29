@@ -22,13 +22,33 @@ import TableList from "views/TableList.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
 import Players from "views/Players.js"
-import PlayerPage from "views/PlayerDashboard.js"
 import Team from "views/Team.js"
+import PlayerDashboard from "views/PlayerDashboard.js";
+import { getPlayerWrap } from "./views/Players.js";
+
+const playerlist = await getPlayerWrap();
+const dashroutes = Object.values(playerlist).map((val, key) => {
+  return (
+  {
+    path: "/playerDashboard/" + val.number,
+    params: val,
+    name: "Player Dashboard",
+    side: "False",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-trophy",
+    component: <PlayerDashboard />,
+    layout: "/admin",
+  }
+  )
+}
+)
+
 
 var routes = [
   {
     path: "/dashboard",
     name: "Dashboard",
+    side: "True",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-pie-36",
     component: <Dashboard />,
@@ -37,6 +57,7 @@ var routes = [
   {
     path: "/icons",
     name: "Icons",
+    side: "True",
     rtlName: "الرموز",
     icon: "tim-icons icon-atom",
     component: <Icons />,
@@ -45,6 +66,7 @@ var routes = [
   {
     path: "/notifications",
     name: "Notifications",
+    side: "True",
     rtlName: "إخطارات",
     icon: "tim-icons icon-bell-55",
     component: <Notifications />,
@@ -53,6 +75,7 @@ var routes = [
   {
     path: "/user-profile",
     name: "User Profile",
+    side: "True",
     rtlName: "ملف تعريفي للمستخدم",
     icon: "tim-icons icon-single-02",
     component: <UserProfile />,
@@ -61,6 +84,7 @@ var routes = [
   {
     path: "/tables",
     name: "Table List",
+    side: "True",
     rtlName: "قائمة الجدول",
     icon: "tim-icons icon-puzzle-10",
     component: <TableList />,
@@ -69,6 +93,7 @@ var routes = [
   {
     path: "/typography",
     name: "Typography",
+    side: "True",
     rtlName: "طباعة",
     icon: "tim-icons icon-align-center",
     component: <Typography />,
@@ -77,6 +102,7 @@ var routes = [
   {
     path: "/players",
     name: "Players",
+    side: "True",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-badge",
     component: <Players />,
@@ -85,10 +111,22 @@ var routes = [
   {
     path: "/team",
     name: "Team",
+    side: "True",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-trophy",
     component: <Team />,
     layout: "/admin",
   },
-];
+  {
+    path: "/playerDashboard",
+    name: "Player Dashboard",
+    side: "False",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-trophy",
+    component: <PlayerDashboard />,
+    layout: "/admin",
+  },
+].concat(dashroutes);
+
+
 export default routes;
