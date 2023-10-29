@@ -31,6 +31,7 @@ const dashroutes = Object.values(playerlist).map((val, key) => {
   return (
   {
     path: "/playerDashboard/" + val.number,
+    params: val,
     name: "Player Dashboard",
     side: "False",
     rtlName: "لوحة القيادة",

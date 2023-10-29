@@ -66,7 +66,7 @@ function Players() {
             <Card className="card-plain">
               <CardHeader>
                 <CardTitle tag="h4">Athletes</CardTitle>
-                <p className="category">Dashboard Link</p>
+                <p className="category">CLick name to view athlete dashboard</p>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
@@ -74,16 +74,14 @@ function Players() {
                     <tr>
                       <th>Athelte</th>
                       <th>Number</th>
-                      <th>Dashboard</th>
                     </tr>
                   </thead>
                   <tbody>
                     {Object.values(playerList).map((val, key) => {
                     return (
                         <tr>
-                            <td>{val.fname} {val.lname}</td>
+                            <td> <Link to={"/admin/playerDashboard/" + val.number} style = {{ color: '#FFF' }}>{val.fname} {val.lname} </Link></td>
                             <td>{val.number}</td>
-                            <td><Link to={"/admin/playerDashboard/" + val.number}> Dashboard </Link></td>
                         </tr>
                     )
                 })}
