@@ -83,7 +83,7 @@ function Players() {
                         <tr>
                             <td>{val.fname} {val.lname}</td>
                             <td>{val.number}</td>
-                            <td><Link to="/Dashboard"> Dashboard </Link></td>
+                            <td><Link to={"/admin/playerDashboard/" + val.number}> Dashboard </Link></td>
                         </tr>
                     )
                 })}
