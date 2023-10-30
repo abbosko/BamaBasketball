@@ -21,6 +21,8 @@ import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 
+import playerPhoto from "../assets/img/kris_parker.jpg";
+
 // reactstrap components
 import {
   Button,
@@ -63,6 +65,59 @@ function PlayerDashboard(props) {
     <>
       <div className="content">
         <h1>Player Statisitcs</h1>
+        <h2 style={{color: '#a9a9a9'}}>Kris Parker</h2>
+        <Row>
+          <Col lg="6" md="12">
+            <img src={playerPhoto} alt="Player" style={{width: 450, height: 450}} />
+          </Col>
+          <Col lg="6" md="12">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">Player Statistics</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table className="tablesorter" responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Trimp</td>
+                      <td>134.15</td>
+                    </tr>
+                    <tr>
+                      <td>Energy Consumption</td>
+                      <td>1153.65 kcal</td>
+                    </tr>
+                    <tr>
+                      <td>Status</td>
+                      <td>66.66</td>
+                    </tr>
+                    <tr>
+                      <td>Brake Phase</td>
+                      <td>0.18</td>
+                    </tr>
+                    <tr>
+                      <td>Brake Net Impulse</td>
+                      <td>116</td>
+                    </tr>
+                    <tr>
+                      <td>Brake Power</td>
+                      <td>-1181</td>
+                    </tr>
+                    <tr>
+                      <td>mRSI</td>
+                      <td>0.62</td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
         <Row>
           <Col xs="12">
             <Card className="card-chart">
@@ -201,7 +256,6 @@ function PlayerDashboard(props) {
           </Col>
         </Row>
         <Row>
-          <Col lg="6" md="12">
           <Card className="card-chart">
               <CardHeader>
                 <h5 className="card-category">Player Stats</h5>
@@ -218,54 +272,6 @@ function PlayerDashboard(props) {
                 </div>
               </CardBody>
             </Card>
-          </Col>
-          <Col lg="6" md="12">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">Player Statistics</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Name</th>
-                      <th>Training Impulse</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
         </Row>
       </div>
     </>
