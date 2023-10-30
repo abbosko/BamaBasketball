@@ -68,49 +68,61 @@ function PlayerDashboard(props) {
         <h2 style={{color: '#a9a9a9'}}>Kris Parker</h2>
         <Row>
           <Col lg="6" md="12">
-            <img src={playerPhoto} alt="Player" style={{width: 450, height: 450}} />
+            <img src={playerPhoto} alt="Player" style={{width: 600, height: 600}} />
           </Col>
           <Col lg="6" md="12">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Player Statistics</CardTitle>
+                <CardTitle tag="h4">Team Stats</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
                   <thead className="text-primary">
                     <tr>
-                      <th>Name</th>
+                      <th>Stat</th>
                       <th>Value</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Trimp</td>
-                      <td>134.15</td>
+                      <td>Duration</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Energy Consumption</td>
-                      <td>1153.65 kcal</td>
+                      <td>Accumulated Acceleration Load</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Status</td>
-                      <td>66.66</td>
+                      <td>Accumulated Acceleration Load per Minute</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Brake Phase</td>
-                      <td>0.18</td>
+                      <td>Total Distance Session</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Brake Net Impulse</td>
-                      <td>116</td>
+                      <td>Total Distance Session Week </td>
+                      <td>-</td>
                     </tr>
                     <tr>
-                      <td>Brake Power</td>
-                      <td>-1181</td>
+                      <td>Max Speed</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>mRSI</td>
-                      <td>0.62</td>
+                      <td>Max Jump Height</td>
+                      <td>--</td>
+                    </tr>
+                    <tr>
+                      <td>Jump Count</td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td>Changes of Orientation</td>
+                      <td>--</td>
+                    </tr>
+                    <tr>
+                      <td>Calories</td>
+                      <td>-</td>
                     </tr>
                   </tbody>
                 </Table>
