@@ -62,7 +62,7 @@ function Dashboard(props) {
   return (
     <>
       <div className="content">
-        <h1>Team Statisitcs</h1>
+        <h1>Team Locker Room</h1>
         <Row>
           <Col xs="12">
             <Card className="card-chart">
