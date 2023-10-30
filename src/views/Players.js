@@ -80,7 +80,7 @@ function Players() {
                     {Object.values(playerList).map((val, key) => {
                     return (
                         <tr>
-                            <td> <Link to={"/admin/playerDashboard/" + val.number} style = {{ color: '#FFF' }}>{val.fname} {val.lname} </Link></td>
+                            <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic}} style = {{ color: '#FFF' }}>{val.fname} {val.lname} </Link></td>
                             <td>{val.number}</td>
                         </tr>
                     )

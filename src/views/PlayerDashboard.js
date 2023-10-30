@@ -21,7 +21,9 @@ import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 
-import playerPhoto from "../assets/img/kris_parker.jpg";
+import {useLocation} from "react-router-dom";
+
+//import playerPhoto from "../assets/img/Kris_Parker.jpg";
 
 // reactstrap components
 import {
@@ -61,14 +63,17 @@ function PlayerDashboard(props) {
   const stChart2Data = (name) => {
     setChart2Data(name);
   };*/
+
+  const location = useLocation();
+
   return (
     <>
       <div className="content">
         <h1>Player Statisitcs</h1>
-        <h2 style={{color: '#a9a9a9'}}>Kris Parker</h2>
+        <h2 style={{color: '#a9a9a9'}}>{location.state.fname} {location.state.lname}</h2>
         <Row>
           <Col lg="6" md="12">
-            <img src={playerPhoto} alt="Player" style={{width: 600, height: 600}} />
+            <img src={location.state.pic} alt="Player" style={{width: 400, height: 500}} />
           </Col>
           <Col lg="6" md="12">
             <Card>
