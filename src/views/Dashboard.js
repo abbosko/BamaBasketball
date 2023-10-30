@@ -222,44 +222,56 @@ function Dashboard(props) {
           <Col lg="6" md="12">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Trimp Leaderboard</CardTitle>
+                <CardTitle tag="h4">Team Stats</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
                   <thead className="text-primary">
                     <tr>
-                      <th>Name</th>
-                      <th>Training Impulse</th>
+                      <th>Stat</th>
+                      <th>Value</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
+                      <td>Duration</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
+                      <td>Accumulated Acceleration Load</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
+                      <td>Accumulated Acceleration Load per Minute</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
+                      <td>Total Distance Session</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
+                      <td>Total Distance Session Week </td>
+                      <td>-</td>
                     </tr>
                     <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
+                      <td>Max Speed</td>
+                      <td>--</td>
                     </tr>
                     <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
+                      <td>Max Jump Height</td>
+                      <td>--</td>
+                    </tr>
+                    <tr>
+                      <td>Jump Count</td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td>Changes of Orientation</td>
+                      <td>--</td>
+                    </tr>
+                    <tr>
+                      <td>Calories</td>
+                      <td>-</td>
                     </tr>
                   </tbody>
                 </Table>
