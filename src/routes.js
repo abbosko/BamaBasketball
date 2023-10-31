@@ -17,9 +17,7 @@
 */
 import Dashboard from "views/Dashboard.js";
 import Icons from "views/Icons.js";
-import Notifications from "views/Notifications.js";
 import TableList from "views/TableList.js";
-import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
 import Players from "views/Players.js"
 import Team from "views/Team.js"
@@ -64,15 +62,6 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/notifications",
-    name: "Notifications",
-    side: "True",
-    rtlName: "إخطارات",
-    icon: "tim-icons icon-bell-55",
-    component: <Notifications />,
-    layout: "/admin",
-  },
-  {
     path: "/user-profile",
     name: "User Profile",
     side: "True",
@@ -88,15 +77,6 @@ var routes = [
     rtlName: "قائمة الجدول",
     icon: "tim-icons icon-puzzle-10",
     component: <TableList />,
-    layout: "/admin",
-  },
-  {
-    path: "/typography",
-    name: "Typography",
-    side: "True",
-    rtlName: "طباعة",
-    icon: "tim-icons icon-align-center",
-    component: <Typography />,
     layout: "/admin",
   },
   {
