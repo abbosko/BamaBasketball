@@ -23,7 +23,8 @@ import { Line, Bar } from "react-chartjs-2";
 
 import {useLocation} from "react-router-dom";
 
-//import playerPhoto from "../assets/img/Kris_Parker.jpg";
+import { getDatabase, ref, get} from "firebase/database";
+import { initializeApp } from 'firebase/app';
 
 // reactstrap components
 import {
@@ -53,6 +54,50 @@ import {
   chartExample3,
   chartExample4,
 } from "variables/charts.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
+  authDomain: "uambb-2def3.firebaseapp.com",
+  projectId: "uambb-2def3",
+  storageBucket: "uambb-2def3.appspot.com",
+  messagingSenderId: "210177408912",
+  appId: "1:210177408912:web:b608c7e17caa478eb27d15",
+  measurementId: "G-EYZBG3EE9B",
+  databaseURL: "https://uambb-2def3-default-rtdb.firebaseio.com/"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+async function getPlayerHawk(){
+  const db = getDatabase(app);
+  const hawkRef = ref(db, 'HawkinStats/2023-10-24/1698160745');
+  let snapshot = await get(hawkRef);
+  
+  if (snapshot.exists()) {
+          let snap  = await snapshot.val();
+          return snap;
+        } else {
+          console.log("No data available");
+        }
+        
+  }
+  
+  export async function getHawkWrap(){
+  let data = await getPlayerHawk();
+  return data;
+  }
+const hawkList = await getHawkWrap();
+
+/*{Object.values(hawkList).map((val, key) => {
+  return (
+      <tr>
+          <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic}} style = {{ color: '#FFF' }}>{val.fname} {val.lname} </Link></td>
+          <td>{val.number}</td>
+      </tr>
+  )
+})}*/
+
 
 function PlayerDashboard(props) {
   const [bigChartData, setbigChartData] = React.useState("data1");
@@ -90,44 +135,36 @@ function PlayerDashboard(props) {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Duration</td>
-                      <td>--</td>
+                      <td>LR Brake Force</td>
+                      <td>{hawkList.LRBrakeForce} %</td>
                     </tr>
                     <tr>
-                      <td>Accumulated Acceleration Load</td>
-                      <td>--</td>
+                      <td>Brake Net Impulse</td>
+                      <td>{hawkList.brakeNetImp} N.s</td>
                     </tr>
                     <tr>
-                      <td>Accumulated Acceleration Load per Minute</td>
-                      <td>--</td>
+                      <td>Brake Phase</td>
+                      <td>{hawkList.brakePhase} %</td>
                     </tr>
                     <tr>
-                      <td>Total Distance Session</td>
-                      <td>--</td>
+                      <td>Brake Power</td>
+                      <td>{hawkList.brakePwr} W</td>
                     </tr>
                     <tr>
-                      <td>Total Distance Session Week </td>
-                      <td>-</td>
+                      <td>Jump Height</td>
+                      <td>{hawkList.jumpHeight} m</td>
                     </tr>
                     <tr>
-                      <td>Max Speed</td>
-                      <td>--</td>
+                      <td>mRSI</td>
+                      <td>{hawkList.mRSI}</td>
                     </tr>
                     <tr>
-                      <td>Max Jump Height</td>
-                      <td>--</td>
+                      <td>Propulsive Net Impulse</td>
+                      <td>{hawkList.prpp} N.s</td>
                     </tr>
                     <tr>
-                      <td>Jump Count</td>
-                      <td>-</td>
-                    </tr>
-                    <tr>
-                      <td>Changes of Orientation</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Calories</td>
-                      <td>-</td>
+                      <td>Time to Takeoff</td>
+                      <td>{hawkList.timeTakeoff} s</td>
                     </tr>
                   </tbody>
                 </Table>
