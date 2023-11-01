@@ -69,6 +69,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// hawkin data
 async function getPlayerHawk(){
   const db = getDatabase(app);
   const hawkRef = ref(db, 'HawkinStats/2023-10-24');
@@ -88,6 +89,27 @@ async function getPlayerHawk(){
   return data;
   }
   const hawkList = await getHawkWrap();
+
+  // kinexon data
+  async function getPlayerKinexon(){
+    const db = getDatabase(app);
+    const kinRef = ref(db, 'KinexonStats/2023-10-27 14:34:15');
+    let snapshot = await get(kinRef);
+    
+    if (snapshot.exists()) {
+            let snap  = await snapshot.val();
+            return snap;
+          } else {
+            console.log("No data available");
+          }
+          
+    }
+    
+    export async function getKinexonWrap(){
+    let data = await getPlayerKinexon();
+    return data;
+    }
+    const kinList = await getKinexonWrap();
 
 
 function PlayerDashboard(props) {
@@ -128,7 +150,7 @@ function PlayerDashboard(props) {
                   </thead>
                   <tbody>
                     {Object.values(hawkList).map((val, key) => {
-                      if(val.player_id === location.state.hawkins_id) {
+                      if(val.player_id == location.state.hawkins_id) {
                         return (
                           <>
                             <tr>
@@ -180,7 +202,7 @@ function PlayerDashboard(props) {
           <Col xs="4">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Hawkin Stats</CardTitle>
+                <CardTitle tag="h4">Kinexon Stats</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
@@ -191,47 +213,46 @@ function PlayerDashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.values(hawkList).map((val, key) => {
-                      if(val.player_id === location.state.hawkins_id) {
+                    {Object.values(kinList).map((val, key) => {
+                      if(val.player_id == location.state.kinexon_id) {
                         return (
                           <>
                             <tr>
-                              <td>LR Brake Force</td>
-                              <td>{val.LRBrakeForce} %</td>
+                              <td>Accumulated Acceleration Load</td>
+                              <td>{val.accel_load_accum}</td>
                             </tr>
                             <tr>
-                              <td>Time to Takeoff</td>
-                              <td>{val.timeTakeoff} s</td>
+                              <td>Accumulated Acceleration Load per Min</td>
+                              <td>{val.accel_load_accum_avg_per_minute}</td>
                             </tr>
                             <tr>
-                              <td>Peak Relative Propulsive Power</td>
-                              <td>{val.prpp} W/kg</td>
+                              <td>Changes of Orientation</td>
+                              <td>{val.event_count_change_of_orientation}</td>
                             </tr>
                             <tr>
-                              <td>Propulsive Net Impulse</td>
-                              <td>{val.propNetImp} N.s</td>
+                              <td>Duration</td>
+                              <td>{val.duration}</td>
                             </tr>
                             <tr>
-                              <td>mRSI</td>
-                              <td>{val.mRSI}</td>
+                              <td>Jump Count</td>
+                              <td>{val.event_count_jump}</td>
                             </tr>
                             <tr>
-                              <td>Jump Height</td>
-                              <td>{val.jumpHeight} m</td>
+                              <td>Max Jump Height</td>
+                              <td>{val.jump_height_max} ft</td>
                             </tr>
                             <tr>
-                              <td>Brake Power</td>
-                              <td>{val.brakePwr} W</td>
+                              <td>Max Speed</td>
+                              <td>{val.speed_max} mph</td>
                             </tr>
                             <tr>
-                              <td>Brake Phase</td>
-                              <td>{val.brakePhase} s</td>
+                              <td>Total Distance (Session)</td>
+                              <td>{val.distance_total} mi</td>
                             </tr>
                             <tr>
-                              <td>Brake Net Impulse</td>
-                              <td>{val.brakeNetImp} N.s</td>
+                              <td>\Total Distance (Week)</td>
+                              <td>**put on week table</td>
                             </tr>
-                            
                           </>
                         )
                       }

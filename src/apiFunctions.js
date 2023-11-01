@@ -23,7 +23,7 @@ dotenv.config()
 
 //const token = genToken();
 
-const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
+/*const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
 
 async function getPlayers(){
 const playerRef = ref(db, 'Players');
@@ -44,7 +44,7 @@ let data = await getPlayers();
 return Object.values( data);
 }
 
-/*
+
 class FirstbeatPlayerSession{
   constructor(trimp, engConsumption, playerStatusScore){
       this.trimp = trimp;
@@ -64,16 +64,16 @@ function FBAthlete(fname, lname, email, id) {
 }
 
 // loaded all data from jan 1 2023 - 10/22
-var kinBeginDate = '2023-01-01%2000%3A00%3A00';
-var kinEndDate = '2023-06-01%2000%3A00%3A00';
+var min_session_date = '2023-06-01%2000%3A00%3A00';
+var today = '2023-10-31%2000%3A00%3A00';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
 var last_kinexon_session = new Date().toISOString();
 
 async function getKinexonSessions(){
-    var today = new Date().toISOString();
-    let datetime_array = last_kinexon_session.split('T');
-    let min_session_date = datetime_array[0].toISOString();
-    min_session_date = min_session_date + "T00:00:00Z";
+    //var today = new Date().toISOString();
+    //let datetime_array = last_kinexon_session.split('T');
+    //let min_session_date = datetime_array[0].toISOString();
+    //min_session_date = min_session_date + "T00:00:00Z";
 
    return await fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', process.env.KINEXON_API_KEY), {
         headers: {
@@ -123,7 +123,8 @@ async function getapiKinexonStats(kinPlayerId, session_id) {
    async function processResults(data, session_id, kinPlayerId, session_date){
         
         console.log(data)
-        set(ref(db, 'KinexonStats/' + session_id + '/'+ kinPlayerId), {
+        set(ref(db, 'KinexonStats/' + session_date + '/'+ kinPlayerId), {
+            session_id: session_id,
             date: session_date,
             accel_load_accum: data.accel_load_accum,
             accel_load_accum_avg_per_minute: data.accel_load_accum_avg_per_minute,
@@ -132,6 +133,7 @@ async function getapiKinexonStats(kinPlayerId, session_id) {
             jump_height_max: data.jump_height_max,
             event_count_jump: data.event_count_jump,
             event_count_change_of_orientation: data.event_count_change_of_orientation,
+            player_id: kinPlayerId,
         });
 
 }
@@ -152,7 +154,7 @@ async function setKinexonStats(){
      last_kinexon_session = sessions[i].start_session;
     }
 }
-*/
+setKinexonStats();*/
 
 
 
@@ -161,7 +163,6 @@ async function setKinexonStats(){
 * Hawkins API calls! :)
 */
 
-var last_hawkin_session;
 /*const test = query(ref(db,'HawkinStats'), limitToLast(1));
 get(test).then((snapshot) => {
   if (snapshot.exists()) {
