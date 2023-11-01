@@ -253,9 +253,18 @@ async function setHawkins() {
 * Firstbeat API calls! :)
 */
 /*
-let fbAuth = 'Bearer ' + token;                // generates authorization token
+let fbAuth = 'Bearer ' + genToken();                // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
+
+class FirstbeatPlayerSession{
+    constructor(trimp, engConsumption, playerStatusScore){
+        this.trimp = trimp;
+        this.engConsumption = engConsumption;
+        this.playerStatusScore = playerStatusScore;
+
+    }
+}
 
 // gets athlete info, creates instance of 'FBAthlete', stores in fbAthleteArray
 const apiFirstBeatAthletes = () => {
@@ -338,34 +347,37 @@ async function processFBsession(data, sessionID){
 
     data = await Promise.resolve(data); // i think this can be deleted idk
     if (data.measurements == null){     // retry if getting {message: Accepted} -- mostly for historical data load, prob could delete
-        console.log ("sleep 10 seconds");
+        //return;
+        console.log (data.measurements);
         await sleep(10000);
         data = await  apiFirstBeatSessionResults(sessionID)
     }
   
-        for(let i = 0; i < data.measurements.length; i++) {
-            let session = new FirstbeatPlayerSession(0,0,0);
-            session.athlete_id = data.measurements[i].athleteId;
-            let datetime_array = data.measurements[i].startTime.split('T');
-            let session_date = datetime_array[0];
-            session.sessionID = data.measurements[i].sessionId;
-            session.session_date = session_date;
+    for(let i = 0; i < data.measurements.length; i++) {
+        let session = new FirstbeatPlayerSession(0,0,0);
+        session.athlete_id = data.measurements[i].athleteId;
+        let datetime_array = data.measurements[i].startTime.split('T');
+        let session_date = datetime_array[0];
+        session.sessionID = data.measurements[i].sessionId;
+        session.session_date = session_date;
 
-        
-            for(let j = 0; j < data.measurements[i].variables.length; j++) {
-                if(data.measurements[i].variables[j].name == 'trimp') session.trimp = data.measurements[i].variables[j].value;
-                if(data.measurements[i].variables[j].name == 'energyConsumptionTotal') session.engConsumption =  data.measurements[i].variables[j].value;
-                if(data.measurements[i].variables[j].name == 'playerStatusScore') session.playerStatusScore = data.measurements[i].variables[j].value;
+    
+        for(let j = 0; j < data.measurements[i].variables.length; j++) {
+            if(data.measurements[i].variables[j].name == 'trimp') session.trimp = data.measurements[i].variables[j].value;
+            if(data.measurements[i].variables[j].name == 'energyConsumptionTotal') session.engConsumption =  data.measurements[i].variables[j].value;
+            if(data.measurements[i].variables[j].name == 'playerStatusScore') session.playerStatusScore = data.measurements[i].variables[j].value;
 
-            }
-            set(ref(db, 'FirstbeatStats/' + session.sessionID + '/'+ session.athlete_id), {
-                date: session_date,
-                trimp : session.trimp,
-                energyConsumptionTotal: session.engConsumption,
-                playerStatusScore: session.playerStatusScore,
-            });
         }
+        set(ref(db, 'FirstbeatStats/' + session_date + '/'+ session.athlete_id), {
+            session_id: session.sessionID,
+            date: session_date,
+            player_id: session.athlete_id,
+            trimp : session.trimp,
+            energyConsumptionTotal: session.engConsumption,
+            playerStatusScore: session.playerStatusScore,
+        });
     }
+}
     
 var last_session_date = new Date();     // Keeping Last session date in memory to reload from this time
 last_session_date.setDate(last_session_date.getDate() - 1);
@@ -385,5 +397,5 @@ async function setFirstBeatSessions(){
    }
 
 
-//apiFirstBeatSessions();
+setFirstBeatSessions();
 */

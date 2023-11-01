@@ -76,40 +76,58 @@ async function getPlayerHawk(){
   let snapshot = await get(hawkRef);
   
   if (snapshot.exists()) {
-          let snap  = await snapshot.val();
-          return snap;
-        } else {
-          console.log("No data available");
-        }
-        
-  }
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }       
+}
   
-  export async function getHawkWrap(){
+export async function getHawkWrap(){
   let data = await getPlayerHawk();
   return data;
-  }
-  const hawkList = await getHawkWrap();
+}
+const hawkList = await getHawkWrap();
 
-  // kinexon data
-  async function getPlayerKinexon(){
-    const db = getDatabase(app);
-    const kinRef = ref(db, 'KinexonStats/2023-10-27 14:34:15');
-    let snapshot = await get(kinRef);
-    
-    if (snapshot.exists()) {
-            let snap  = await snapshot.val();
-            return snap;
-          } else {
-            console.log("No data available");
-          }
-          
-    }
-    
-    export async function getKinexonWrap(){
-    let data = await getPlayerKinexon();
-    return data;
-    }
-    const kinList = await getKinexonWrap();
+// kinexon data
+async function getPlayerKinexon(){
+  const db = getDatabase(app);
+  const kinRef = ref(db, 'KinexonStats/2023-10-27 14:34:15');
+  let snapshot = await get(kinRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getKinexonWrap(){
+  let data = await getPlayerKinexon();
+  return data;
+}
+const kinList = await getKinexonWrap();
+
+// firstbeat data
+async function getPlayerFB(){
+  const db = getDatabase(app);
+  const fbRef = ref(db, 'FirstbeatStats/2023-11-01');
+  let snapshot = await get(fbRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }       
+}
+  
+export async function getFBWrap(){
+  let data = await getPlayerFB();
+  return data;
+}
+const fbList = await getFBWrap();
 
 
 function PlayerDashboard(props) {
@@ -265,7 +283,7 @@ function PlayerDashboard(props) {
           <Col xs="4">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Hawkin Stats</CardTitle>
+                <CardTitle tag="h4">FirstBeat Stats</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
@@ -276,47 +294,22 @@ function PlayerDashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.values(hawkList).map((val, key) => {
-                      if(val.player_id === location.state.hawkins_id) {
+                    {Object.values(fbList).map((val, key) => {
+                      if(val.player_id == location.state.firstbeat_id) {
                         return (
                           <>
                             <tr>
-                              <td>LR Brake Force</td>
-                              <td>{val.LRBrakeForce} %</td>
+                              <td>Trimp</td>
+                              <td>{val.trimp}</td>
                             </tr>
                             <tr>
-                              <td>Time to Takeoff</td>
-                              <td>{val.timeTakeoff} s</td>
+                              <td>Total Energy Consumption</td>
+                              <td>{val.energyConsumptionTotal} kcal</td>
                             </tr>
                             <tr>
-                              <td>Peak Relative Propulsive Power</td>
-                              <td>{val.prpp} W/kg</td>
+                              <td>Status Score</td>
+                              <td>{val.playerStatusScore}</td>
                             </tr>
-                            <tr>
-                              <td>Propulsive Net Impulse</td>
-                              <td>{val.propNetImp} N.s</td>
-                            </tr>
-                            <tr>
-                              <td>mRSI</td>
-                              <td>{val.mRSI}</td>
-                            </tr>
-                            <tr>
-                              <td>Jump Height</td>
-                              <td>{val.jumpHeight} m</td>
-                            </tr>
-                            <tr>
-                              <td>Brake Power</td>
-                              <td>{val.brakePwr} W</td>
-                            </tr>
-                            <tr>
-                              <td>Brake Phase</td>
-                              <td>{val.brakePhase} s</td>
-                            </tr>
-                            <tr>
-                              <td>Brake Net Impulse</td>
-                              <td>{val.brakeNetImp} N.s</td>
-                            </tr>
-                            
                           </>
                         )
                       }
