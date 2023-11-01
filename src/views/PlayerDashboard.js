@@ -71,7 +71,7 @@ const app = initializeApp(firebaseConfig);
 
 async function getPlayerHawk(){
   const db = getDatabase(app);
-  const hawkRef = ref(db, 'HawkinStats/2023-10-24/1698160745');
+  const hawkRef = ref(db, 'HawkinStats/2023-10-24');
   let snapshot = await get(hawkRef);
   
   if (snapshot.exists()) {
@@ -87,16 +87,7 @@ async function getPlayerHawk(){
   let data = await getPlayerHawk();
   return data;
   }
-const hawkList = await getHawkWrap();
-
-/*{Object.values(hawkList).map((val, key) => {
-  return (
-      <tr>
-          <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic}} style = {{ color: '#FFF' }}>{val.fname} {val.lname} </Link></td>
-          <td>{val.number}</td>
-      </tr>
-  )
-})}*/
+  const hawkList = await getHawkWrap();
 
 
 function PlayerDashboard(props) {
@@ -123,7 +114,7 @@ function PlayerDashboard(props) {
           <Col lg="6" md="12">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Team Stats</CardTitle>
+                <CardTitle tag="h4">Hawkin Stats</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
@@ -134,38 +125,51 @@ function PlayerDashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>LR Brake Force</td>
-                      <td>{hawkList.LRBrakeForce} %</td>
-                    </tr>
-                    <tr>
-                      <td>Brake Net Impulse</td>
-                      <td>{hawkList.brakeNetImp} N.s</td>
-                    </tr>
-                    <tr>
-                      <td>Brake Phase</td>
-                      <td>{hawkList.brakePhase} %</td>
-                    </tr>
-                    <tr>
-                      <td>Brake Power</td>
-                      <td>{hawkList.brakePwr} W</td>
-                    </tr>
-                    <tr>
-                      <td>Jump Height</td>
-                      <td>{hawkList.jumpHeight} m</td>
-                    </tr>
-                    <tr>
-                      <td>mRSI</td>
-                      <td>{hawkList.mRSI}</td>
-                    </tr>
-                    <tr>
-                      <td>Propulsive Net Impulse</td>
-                      <td>{hawkList.prpp} N.s</td>
-                    </tr>
-                    <tr>
-                      <td>Time to Takeoff</td>
-                      <td>{hawkList.timeTakeoff} s</td>
-                    </tr>
+                    {Object.values(hawkList).map((val, key) => {
+                      if(val.player_id === location.state.hawkins_id) {
+                        return (
+                          <>
+                            <tr>
+                              <td>LR Brake Force</td>
+                              <td>{val.LRBrakeForce} %</td>
+                            </tr>
+                            <tr>
+                              <td>Time to Takeoff</td>
+                              <td>{val.timeTakeoff} s</td>
+                            </tr>
+                            <tr>
+                              <td>Peak Relative Propulsive Power</td>
+                              <td>{val.prpp} W/kg</td>
+                            </tr>
+                            <tr>
+                              <td>Propulsive Net Impulse</td>
+                              <td>{val.propNetImp} N.s</td>
+                            </tr>
+                            <tr>
+                              <td>mRSI</td>
+                              <td>{val.mRSI}</td>
+                            </tr>
+                            <tr>
+                              <td>Jump Height</td>
+                              <td>{val.jumpHeight} m</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Power</td>
+                              <td>{val.brakePwr} W</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Phase</td>
+                              <td>{val.brakePhase} s</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Net Impulse</td>
+                              <td>{val.brakeNetImp} N.s</td>
+                            </tr>
+                            
+                          </>
+                        )
+                      }
+                    })}
                   </tbody>
                 </Table>
               </CardBody>
