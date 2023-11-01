@@ -111,7 +111,137 @@ function PlayerDashboard(props) {
           <Col lg="6" md="12">
             <img src={location.state.pic} alt="Player" style={{width: 400, height: 500}} />
           </Col>
-          <Col lg="6" md="12">
+        </Row>
+        <Row>
+          <Col xs="4">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">Hawkin Stats</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table className="tablesorter" responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Stat</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(hawkList).map((val, key) => {
+                      if(val.player_id === location.state.hawkins_id) {
+                        return (
+                          <>
+                            <tr>
+                              <td>LR Brake Force</td>
+                              <td>{val.LRBrakeForce} %</td>
+                            </tr>
+                            <tr>
+                              <td>Time to Takeoff</td>
+                              <td>{val.timeTakeoff} s</td>
+                            </tr>
+                            <tr>
+                              <td>Peak Relative Propulsive Power</td>
+                              <td>{val.prpp} W/kg</td>
+                            </tr>
+                            <tr>
+                              <td>Propulsive Net Impulse</td>
+                              <td>{val.propNetImp} N.s</td>
+                            </tr>
+                            <tr>
+                              <td>mRSI</td>
+                              <td>{val.mRSI}</td>
+                            </tr>
+                            <tr>
+                              <td>Jump Height</td>
+                              <td>{val.jumpHeight} m</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Power</td>
+                              <td>{val.brakePwr} W</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Phase</td>
+                              <td>{val.brakePhase} s</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Net Impulse</td>
+                              <td>{val.brakeNetImp} N.s</td>
+                            </tr>
+                            
+                          </>
+                        )
+                      }
+                    })}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xs="4">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">Hawkin Stats</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table className="tablesorter" responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Stat</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(hawkList).map((val, key) => {
+                      if(val.player_id === location.state.hawkins_id) {
+                        return (
+                          <>
+                            <tr>
+                              <td>LR Brake Force</td>
+                              <td>{val.LRBrakeForce} %</td>
+                            </tr>
+                            <tr>
+                              <td>Time to Takeoff</td>
+                              <td>{val.timeTakeoff} s</td>
+                            </tr>
+                            <tr>
+                              <td>Peak Relative Propulsive Power</td>
+                              <td>{val.prpp} W/kg</td>
+                            </tr>
+                            <tr>
+                              <td>Propulsive Net Impulse</td>
+                              <td>{val.propNetImp} N.s</td>
+                            </tr>
+                            <tr>
+                              <td>mRSI</td>
+                              <td>{val.mRSI}</td>
+                            </tr>
+                            <tr>
+                              <td>Jump Height</td>
+                              <td>{val.jumpHeight} m</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Power</td>
+                              <td>{val.brakePwr} W</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Phase</td>
+                              <td>{val.brakePhase} s</td>
+                            </tr>
+                            <tr>
+                              <td>Brake Net Impulse</td>
+                              <td>{val.brakeNetImp} N.s</td>
+                            </tr>
+                            
+                          </>
+                        )
+                      }
+                    })}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xs="4">
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Hawkin Stats</CardTitle>
