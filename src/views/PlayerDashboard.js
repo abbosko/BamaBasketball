@@ -69,65 +69,96 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// hawkin data
-async function getPlayerHawk(){
+
+async function getLastHawkinsSession(){
   const db = getDatabase(app);
-  const hawkRef = ref(db, 'HawkinStats/2023-10-24');
+  const hawkRef = ref(db, 'HawkinStats');
+  let last_session_list = await get(hawkRef).order_by_key().limit_to_last(1).get().val();
+  return last_session_list;
+}
+export async function getLastHawkWrap(session_id){
+  let data = await getLastHawkinsSession();
+  return data;
+  }
+  const hawkLastSession = await getLastHawkWrap();
+  console.log(hawkLastSession);
+
+// hawkin data
+async function getPlayerHawk (session_id){
+  const db = getDatabase(app);
+  const hawkRef = ref(db, 'HawkinStats/' + session_id);
   let snapshot = await get(hawkRef);
   
   if (snapshot.exists()) {
-    let snap  = await snapshot.val();
-    return snap;
-  } else {
-    console.log("No data available");
-  }       
-}
+          let snap  = await snapshot.val();
+          return snap;
+        } else {
+          console.log("No data available");
+        }
+        
+  }
   
-export async function getHawkWrap(){
-  let data = await getPlayerHawk();
+  export async function getHawkWrap(session_id){
+  let data = await getPlayerHawk( session_id);
   return data;
-}
-const hawkList = await getHawkWrap();
+  }
+  const hawkList = await getHawkWrap();
 
-// kinexon data
-async function getPlayerKinexon(){
-  const db = getDatabase(app);
-  const kinRef = ref(db, 'KinexonStats/2023-10-27 14:34:15');
-  let snapshot = await get(kinRef);
-  
-  if (snapshot.exists()) {
-    let snap  = await snapshot.val();
-    return snap;
-  } else {
-    console.log("No data available");
-  }      
-}
-  
-export async function getKinexonWrap(){
-  let data = await getPlayerKinexon();
-  return data;
-}
-const kinList = await getKinexonWrap();
+  // kinexon data
+  async function getPlayerKinexon(session_dt){
+    const db = getDatabase(app);
+    const kinRef = ref(db, 'KinexonStats/' + session_dt);
+    let snapshot = await get(kinRef);
+    
+    if (snapshot.exists()) {
+            let snap  = await snapshot.val();
+            return snap;
+          } else {
+            console.log("No data available");
+          }
+          
+    }
+    
+    export async function getKinexonWrap(session_dt){
+    let data = await getPlayerKinexon(session_dt);
+    return data;
+    }
+    const kinList = await getKinexonWrap();
 
-// firstbeat data
-async function getPlayerFB(){
-  const db = getDatabase(app);
-  const fbRef = ref(db, 'FirstbeatStats/2023-11-01');
-  let snapshot = await get(fbRef);
-  
-  if (snapshot.exists()) {
-    let snap  = await snapshot.val();
-    return snap;
-  } else {
-    console.log("No data available");
-  }       
-}
-  
-export async function getFBWrap(){
-  let data = await getPlayerFB();
-  return data;
-}
-const fbList = await getFBWrap();
+    async function get_hawk_sessionID_by_date(session_date){
+      var date;
+      var id;
+      return id;
+    }
+
+    function getHawkinWeekly(player_id, session_id){
+     let  weekly_objects = [];
+      for(let i=0; i<7; i++){
+        weekly_objects.push_back(getHawkWrap())
+      }
+      for(let i=0; i<weekly_objects.length; i++){
+       
+      }
+      
+    }
+    async function getPlayerFB(){
+      const db = getDatabase(app);
+      const fbRef = ref(db, 'FirstbeatStats/2023-11-01');
+      let snapshot = await get(fbRef);
+      
+      if (snapshot.exists()) {
+        let snap  = await snapshot.val();
+        return snap;
+      } else {
+        console.log("No data available");
+      }       
+    }
+      
+    export async function getFBWrap(){
+      let data = await getPlayerFB();
+      return data;
+    }
+    const fbList = await getFBWrap();
 
 
 function PlayerDashboard(props) {
@@ -310,7 +341,7 @@ function PlayerDashboard(props) {
                               <td>Status Score</td>
                               <td>{val.playerStatusScore}</td>
                             </tr>
-                          </>
+                                                      </>
                         )
                       }
                     })}
