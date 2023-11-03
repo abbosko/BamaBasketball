@@ -148,11 +148,70 @@ function PlayerDashboard(props) {
         <h1>Player Statisitcs</h1>
         <h2 style={{color: '#a9a9a9'}}>{location.state.fname} {location.state.lname}</h2>
         <Row>
-          <Col lg="6" md="12">
-            <img src={location.state.pic} alt="Player" style={{width: 400, height: 500}} />
+          
+          <Col xs="4">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">Kinexon Stats</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table className="tablesorter" responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Stat</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(kinList).map((val, key) => {
+                      if(val.player_id == location.state.kinexon_id) {
+                        return (
+                          <>
+                            <tr>
+                              <td>Accumulated Acceleration Load</td>
+                              <td>{val.accel_load_accum}</td>
+                            </tr>
+                            <tr>
+                              <td>Accumulated Acceleration Load per Min</td>
+                              <td>{val.accel_load_accum_avg_per_minute}</td>
+                            </tr>
+                            <tr>
+                              <td>Changes of Orientation</td>
+                              <td>{val.event_count_change_of_orientation}</td>
+                            </tr>
+                            <tr>
+                              <td>Duration</td>
+                              <td>{val.duration}</td>
+                            </tr>
+                            <tr>
+                              <td>Jump Count</td>
+                              <td>{val.event_count_jump}</td>
+                            </tr>
+                            <tr>
+                              <td>Max Jump Height</td>
+                              <td>{val.jump_height_max} ft</td>
+                            </tr>
+                            <tr>
+                              <td>Max Speed</td>
+                              <td>{val.speed_max} mph</td>
+                            </tr>
+                            <tr>
+                              <td>Total Distance (Session)</td>
+                              <td>{val.distance_total} mi</td>
+                            </tr>
+                            <tr>
+                              <td>Total Distance (Week)</td>
+                              <td>**put on week table</td>
+                            </tr>
+                          </>
+                        )
+                      }
+                    })}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
           </Col>
-        </Row>
-        <Row>
           <Col xs="4">
             <Card>
               <CardHeader>
@@ -207,70 +266,6 @@ function PlayerDashboard(props) {
                               <td>Brake Net Impulse</td>
                               <td>{val.brakeNetImp} N.s</td>
                             </tr>
-                            
-                          </>
-                        )
-                      }
-                    })}
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col xs="4">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">Kinexon Stats</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Stat</th>
-                      <th>Value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.values(kinList).map((val, key) => {
-                      if(val.player_id == location.state.kinexon_id) {
-                        return (
-                          <>
-                            <tr>
-                              <td>Accumulated Acceleration Load</td>
-                              <td>{val.accel_load_accum}</td>
-                            </tr>
-                            <tr>
-                              <td>Accumulated Acceleration Load per Min</td>
-                              <td>{val.accel_load_accum_avg_per_minute}</td>
-                            </tr>
-                            <tr>
-                              <td>Changes of Orientation</td>
-                              <td>{val.event_count_change_of_orientation}</td>
-                            </tr>
-                            <tr>
-                              <td>Duration</td>
-                              <td>{val.duration}</td>
-                            </tr>
-                            <tr>
-                              <td>Jump Count</td>
-                              <td>{val.event_count_jump}</td>
-                            </tr>
-                            <tr>
-                              <td>Max Jump Height</td>
-                              <td>{val.jump_height_max} ft</td>
-                            </tr>
-                            <tr>
-                              <td>Max Speed</td>
-                              <td>{val.speed_max} mph</td>
-                            </tr>
-                            <tr>
-                              <td>Total Distance (Session)</td>
-                              <td>{val.distance_total} mi</td>
-                            </tr>
-                            <tr>
-                              <td>\Total Distance (Week)</td>
-                              <td>**put on week table</td>
-                            </tr>
                           </>
                         )
                       }
@@ -318,7 +313,7 @@ function PlayerDashboard(props) {
                 </Table>
               </CardBody>
             </Card>
-          </Col>
+          </Col>          
         </Row>
         <Row>
           <Col xs="12">
