@@ -72,7 +72,8 @@ function Players() {
                 <Table className="tablesorter" responsive>
                 <thead className="text-primary">
                     <tr>
-                      <th>Athelte</th>
+                      <th></th>
+                      <th>Athlete</th>
                       <th>Number</th>
                     </tr>
                   </thead>
@@ -80,6 +81,7 @@ function Players() {
                     {Object.values(playerList).map((val, key) => {
                     return (
                         <tr>
+                            <td><img src={val.pic} alt="Player" style={{width: 80, height: 100}} /></td>
                             <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic, hawkins_id: val.hawkins_id, kinexon_id: val.kinexon_id, firstbeat_id: val.firstbeat_id}} style = {{ color: '#FFF' }}>{val.fname} {val.lname} </Link></td>
                             <td>{val.number}</td>
                         </tr>
