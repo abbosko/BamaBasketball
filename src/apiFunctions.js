@@ -23,6 +23,28 @@ dotenv.config()
 
 //const token = genToken();
 
+
+// when adding new player, call api to get player id
+// async function getKinexonPlayers(){
+// }
+
+// async function getHawkinsPlayers(){
+//         let hawkPlayer = [];
+    
+//         let hawkinPlayers = await fetch((process.env.HAWKINS_URL).concat('/athletes'), {
+//             headers: {
+//                 Authorization: 'Bearer ' + await token.genHawkinToken()
+//             }
+//         });
+    
+//         let hawkinResponse = await hawkinPlayers.json();
+//         for(let i = 0; i < hawkinResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto h
+//             const m = hawkinResponse.data[i];
+
+//         }
+//         return hawkPlayer;
+//     }
+
 /*const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
 
 async function getPlayers(){

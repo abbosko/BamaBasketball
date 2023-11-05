@@ -48,12 +48,12 @@ import {
 } from "reactstrap";
 
 // core components
-import {
-  chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4,
-} from "variables/charts.js";
+// import {
+//   chartExample1,
+//   chartExample2,
+//   chartExample3,
+//   chartExample4,
+// } from "variables/charts.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
@@ -71,9 +71,9 @@ const app = initializeApp(firebaseConfig);
 
 
 async function getLastHawkinsSession(){
-  const db = getDatabase(app);
-  const hawkRef = ref(db, 'HawkinStats');
-  let last_session_list = await get(hawkRef).order_by_key().limit_to_last(1).get().val();
+  const db = getDatabase();
+  const hawkRef = db.ref('HawkinStats');
+  let last_session_list = await hawkRef.orderByKey().limitToLast(1).get();
   return last_session_list;
 }
 export async function getLastHawkWrap(session_id){
@@ -160,7 +160,7 @@ async function getPlayerHawk (session_id){
     }
     const fbList = await getFBWrap();
 
-
+/*
 function PlayerDashboard(props) {
   const [bigChartData, setbigChartData] = React.useState("data1");
   const setBgChartData = (name) => {
@@ -169,7 +169,7 @@ function PlayerDashboard(props) {
   /*const [chart2Data, setChart2Data] = React.useState("data1");
   const stChart2Data = (name) => {
     setChart2Data(name);
-  };*/
+  };
 
   const location = useLocation();
 
@@ -511,4 +511,6 @@ function PlayerDashboard(props) {
   );
 }
 
+
 export default PlayerDashboard;
+*/
