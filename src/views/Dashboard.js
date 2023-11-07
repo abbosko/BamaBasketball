@@ -69,8 +69,8 @@ function Dashboard(props) {
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
-                    <h5 className="card-category">Team Stats</h5>
-                    <CardTitle tag="h2">Training Impulse</CardTitle>
+                    <h5 className="card-category">Firstbeat Team Stats</h5>
+                    <CardTitle tag="h2">Heart Rate Data</CardTitle>
                   </Col>
                   <Col sm="6">
                     <ButtonGroup
@@ -147,7 +147,7 @@ function Dashboard(props) {
           <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
+                <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-bell-55 text-info" /> Time to Takeoff
                 </CardTitle>
@@ -165,7 +165,7 @@ function Dashboard(props) {
           <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
+                <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-delivery-fast text-primary" />{" "}
                   mRSI
@@ -184,7 +184,7 @@ function Dashboard(props) {
           <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
+                <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-send text-success" /> Jump Height
                 </CardTitle>
@@ -202,7 +202,7 @@ function Dashboard(props) {
           <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
+                <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-bell-55 text-info" /> Braking Phase
                 </CardTitle>
