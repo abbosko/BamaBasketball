@@ -149,7 +149,7 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Team Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Training Status
+                  <i className="tim-icons icon-bell-55 text-info" /> Time to Takeoff
                 </CardTitle>
               </CardHeader>
               <CardBody>
