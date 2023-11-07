@@ -144,7 +144,7 @@ function Dashboard(props) {
           </Col>
         </Row>
         <Row>
-          <Col lg="4">
+          <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
                 <h5 className="card-category">Team Stats</h5>
@@ -162,7 +162,7 @@ function Dashboard(props) {
               </CardBody>
             </Card>
           </Col>
-          <Col lg="4">
+          <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
                 <h5 className="card-category">Team Stats</h5>
@@ -181,7 +181,7 @@ function Dashboard(props) {
               </CardBody>
             </Card>
           </Col>
-          <Col lg="4">
+          <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
                 <h5 className="card-category">Team Stats</h5>
@@ -194,6 +194,24 @@ function Dashboard(props) {
                   <Line
                     data={chartExample4.data}
                     options={chartExample4.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="3">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Team Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Phase
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Line
+                    data={chartExample2.data}
+                    options={chartExample2.options}
                   />
                 </div>
               </CardBody>
