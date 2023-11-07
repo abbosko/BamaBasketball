@@ -73,8 +73,8 @@ function Players() {
                 <thead className="text-primary">
                     <tr>
                       <th></th>
-                      <th style = {{fontSize: 25}}>Athlete </th>
-                      <th style = {{fontSize: 25}}>Number</th>
+                      <th style = {{fontSize: 20}}>Athlete </th>
+                      <th style = {{fontSize: 20}}>Number</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -82,8 +82,8 @@ function Players() {
                     return (
                         <tr>
                             <td><img src={val.pic} alt="Player" style={{width: 80, height: 100, borderRadius: 150 / 2,}} /></td>
-                            <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic, hawkins_id: val.hawkins_id, kinexon_id: val.kinexon_id, firstbeat_id: val.firstbeat_id}} style = {{ color: '#FFF', fontSize: 30}}>{val.fname} {val.lname} </Link></td>
-                            <td style = {{fontSize: 25}}>{val.number}</td>
+                            <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic, hawkins_id: val.hawkins_id, kinexon_id: val.kinexon_id, firstbeat_id: val.firstbeat_id}} style = {{ color: '#FFF', fontSize: 20}}>{val.fname} {val.lname} </Link></td>
+                            <td style = {{fontSize: 20}}>{val.number}</td>
                         </tr>
                     )
                 })}
