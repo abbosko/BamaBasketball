@@ -69,8 +69,8 @@ function Dashboard(props) {
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
-                    <h5 className="card-category">Team Stats</h5>
-                    <CardTitle tag="h2">Training Impulse</CardTitle>
+                    <h5 className="card-category">Firstbeat Team Stats</h5>
+                    <CardTitle tag="h2">Heart Rate Data</CardTitle>
                   </Col>
                   <Col sm="6">
                     <ButtonGroup
@@ -144,12 +144,12 @@ function Dashboard(props) {
           </Col>
         </Row>
         <Row>
-          <Col lg="4">
+          <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
+                <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Training Status
+                  <i className="tim-icons icon-bell-55 text-info" /> Time to Takeoff
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -162,10 +162,10 @@ function Dashboard(props) {
               </CardBody>
             </Card>
           </Col>
-          <Col lg="4">
+          <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
+                <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-delivery-fast text-primary" />{" "}
                   mRSI
@@ -181,10 +181,10 @@ function Dashboard(props) {
               </CardBody>
             </Card>
           </Col>
-          <Col lg="4">
+          <Col lg="3">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
+                <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-send text-success" /> Jump Height
                 </CardTitle>
@@ -194,6 +194,24 @@ function Dashboard(props) {
                   <Line
                     data={chartExample4.data}
                     options={chartExample4.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="3">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkins Team Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Phase
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Line
+                    data={chartExample2.data}
+                    options={chartExample2.options}
                   />
                 </div>
               </CardBody>
