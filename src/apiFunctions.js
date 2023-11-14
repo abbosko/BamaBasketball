@@ -1,28 +1,38 @@
 import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
-import { initializeApp } from 'firebase/app';
+
 
 import * as dotenv from 'dotenv';
+import app from './index.js';
 import {genToken, genHawkinToken} from './genToken.js';
-const firebaseConfig = {
-    apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
-    authDomain: "uambb-2def3.firebaseapp.com",
-    projectId: "uambb-2def3",
-    storageBucket: "uambb-2def3.appspot.com",
-    messagingSenderId: "210177408912",
-    appId: "1:210177408912:web:b608c7e17caa478eb27d15",
-    measurementId: "G-EYZBG3EE9B",
-    databaseURL: "https://uambb-2def3-default-rtdb.firebaseio.com/"
-  };
-  
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  
-const db = getDatabase();
+import PlayerDashboard from "views/PlayerDashboard.js";
 
+ 
+// set up 
+const db = getDatabase(app);
 dotenv.config()
+const token = genToken();
 
-//const token = genToken();
 
+
+
+useEffect(() => {
+setFirstbeatData();
+
+setInterval(setFirstbeatData, 1000 * 60 * 60)
+});
+
+
+const dbListener = ref(db, 'KinexonStats');
+onValue(dbListener, (snapshot) => {
+  const data = snapshot.val();
+  PlayerDashboard(postElement, data);
+});
+
+function updatePlayerDashboard(){
+
+    
+    return PlayerDashboard()
+}
 
 // when adding new player, call api to get player id
 // async function getKinexonPlayers(){
@@ -274,7 +284,7 @@ async function setHawkins() {
 /*
 * Firstbeat API calls! :)
 */
-/*
+
 let fbAuth = 'Bearer ' + genToken();                // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
@@ -402,7 +412,7 @@ async function processFBsession(data, sessionID){
 }
     
 var last_session_date = new Date();     // Keeping Last session date in memory to reload from this time
-last_session_date.setDate(last_session_date.getDate() - 1);
+last_session_date.setFullYear(2023,11,1);
 last_session_date = last_session_date.toISOString()
 
 
@@ -419,5 +429,4 @@ async function setFirstBeatSessions(){
    }
 
 
-setFirstBeatSessions();
-*/
+
