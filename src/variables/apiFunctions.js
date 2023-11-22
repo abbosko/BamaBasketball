@@ -1,61 +1,53 @@
 import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
 
 
-import * as dotenv from 'dotenv';
-import app from './index.js';
-import {genToken, genHawkinToken} from './genToken.js';
-import PlayerDashboard from "views/PlayerDashboard.js";
+
+import * as constants from 'constants.js'
+
+import {genToken, genHawkinToken} from '../genToken.js';
 
  
 // set up 
-const db = getDatabase(app);
-dotenv.config()
+const db = getDatabase();
+
 const token = genToken();
 
 
 
 
-useEffect(() => {
-setFirstbeatData();
-
-setInterval(setFirstbeatData, 1000 * 60 * 60)
-});
 
 
-const dbListener = ref(db, 'KinexonStats');
-onValue(dbListener, (snapshot) => {
-  const data = snapshot.val();
-  PlayerDashboard(postElement, data);
-});
 
-function updatePlayerDashboard(){
+// const dbListener = ref(db, 'KinexonStats');
+// onValue(dbListener, (snapshot) => {
+//   const data = snapshot.val();
+//   PlayerDashboard(postElement, data);
+// });
 
-    
-    return PlayerDashboard()
-}
+
 
 // when adding new player, call api to get player id
 // async function getKinexonPlayers(){
 // }
 
-// async function getHawkinsPlayers(){
-//         let hawkPlayer = [];
+export async function getHawkinsPlayers(){
+        let hawkPlayer = [];
     
-//         let hawkinPlayers = await fetch((process.env.HAWKINS_URL).concat('/athletes'), {
-//             headers: {
-//                 Authorization: 'Bearer ' + await token.genHawkinToken()
-//             }
-//         });
+        let hawkinPlayers = await fetch((constants.HAWKINS_URL).concat('/athletes'), {
+            headers: {
+                Authorization: 'Bearer ' + await token.genHawkinToken()
+            }
+        });
     
-//         let hawkinResponse = await hawkinPlayers.json();
-//         for(let i = 0; i < hawkinResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto h
-//             const m = hawkinResponse.data[i];
+        let hawkinResponse = await hawkinPlayers.json();
+        for(let i = 0; i < hawkinResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto h
+            const m = hawkinResponse.data[i];
 
-//         }
-//         return hawkPlayer;
-//     }
+        }
+        return hawkPlayer;
+    }
 
-/*const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
+const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
 
 async function getPlayers(){
 const playerRef = ref(db, 'Players');
@@ -107,10 +99,10 @@ async function getKinexonSessions(){
     //let min_session_date = datetime_array[0].toISOString();
     //min_session_date = min_session_date + "T00:00:00Z";
 
-   return await fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', process.env.KINEXON_API_KEY), {
+   return await fetch((constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
         },
     }) 
     .then(response => { 
@@ -134,10 +126,10 @@ async function getKinexonSessions(){
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
 async function getapiKinexonStats(kinPlayerId, session_id) {
     var data = 0
-    let response  = await fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+    let response  = await fetch((constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
         }}); 
    
     if (response.ok) { 
@@ -186,7 +178,7 @@ async function setKinexonStats(){
      last_kinexon_session = sessions[i].start_session;
     }
 }
-setKinexonStats();*/
+
 
 
 
@@ -195,16 +187,16 @@ setKinexonStats();*/
 * Hawkins API calls! :)
 */
 
-/*const test = query(ref(db,'HawkinStats'), limitToLast(1));
-get(test).then((snapshot) => {
-  if (snapshot.exists()) {
-    console.log(snapshot.val());
-  } else {
-    console.log("No data available");
-  }
-}).catch((error) => {
-  console.error(error);
-});*/
+// const test = query(ref(db,'HawkinStats'), limitToLast(1));
+// get(test).then((snapshot) => {
+//   if (snapshot.exists()) {
+//     console.log(snapshot.val());
+//   } else {
+//     console.log("No data available");
+//   }
+// }).catch((error) => {
+//   console.error(error);
+// });
 
 function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePhase, prpp, brakePwr, brakeNetImp, propNetImp, LRBrakeForce) {
     this.timestamp = timestamp;
@@ -221,11 +213,11 @@ function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePh
 }
 
 // gets all data starting from June 1, 2023 @ midnight: 1685595600
-/*
+
 const apiHawkinsStats = async (datetime) => {
     let hawkStructArray = [];
 
-    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=', datetime), {
+    let hawkinStats = await fetch((constants.HAWKINS_URL).concat('?from=', datetime), {
         headers: {
             Authorization: 'Bearer ' + await token.genHawkinToken()
         }
@@ -289,21 +281,12 @@ let fbAuth = 'Bearer ' + genToken();                // generates authorization t
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
 
-class FirstbeatPlayerSession{
-    constructor(trimp, engConsumption, playerStatusScore){
-        this.trimp = trimp;
-        this.engConsumption = engConsumption;
-        this.playerStatusScore = playerStatusScore;
-
-    }
-}
-
 // gets athlete info, creates instance of 'FBAthlete', stores in fbAthleteArray
 const apiFirstBeatAthletes = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/athletes'), { // add {accountId}/athletes to url
+    fetch((constants.FIRSTBEAT_URL).concat('/athletes'), { // add {accountId}/athletes to url
         headers: {
             Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+            "X-Api-Key": constants.FIRSTBEAT_API_KEY
         }
     }) 
     .then(response => { 
@@ -330,10 +313,10 @@ async function  apiFirstBeatSessions(last_session_date) {
     let datetime_array = last_session_date.split('T');
     let session_date = datetime_array[0];
 
-   const response = await fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
+   const response = await fetch((constants.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
         headers: {
             Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+            "X-Api-Key": constants.FIRSTBEAT_API_KEY
         }
     });
         if (response.ok) { 
@@ -353,10 +336,10 @@ async function apiFirstBeatSessionResults(sessionID) {
     const token = genToken();
     let fbAuth = 'Bearer ' + token; 
 
-   const response = await fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/', sessionID, '/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
+   const response = await fetch((constants.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/', sessionID, '/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
         headers: {
             Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+            "X-Api-Key": constants.FIRSTBEAT_API_KEY
         }
     });
 

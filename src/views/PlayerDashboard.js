@@ -16,6 +16,7 @@
 
 */
 import React from "react";
+import { useEffect } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
@@ -25,6 +26,7 @@ import {useLocation} from "react-router-dom";
 
 import { getDatabase, ref, get} from "firebase/database";
 import { initializeApp } from 'firebase/app';
+import {getHawkinsPlayers} from 'variables/apiFunctions.js'
 
 // reactstrap components
 import {
@@ -139,6 +141,10 @@ function PlayerDashboard(props) {
   const stChart2Data = (name) => {
     setChart2Data(name);
   };*/
+  // useEffect(() => {
+  //   getHawkinsPlayers();
+  //   setInterval(getHawkinsPlayers, 1000 * 60 * 60)
+  //   });
 
   const location = useLocation();
 
