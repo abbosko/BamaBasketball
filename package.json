@@ -3,18 +3,24 @@
   "type": "module",
   "version": "1.2.2",
   "private": true,
+  "proxy": "https://api.firstbeat.com/v1/sports/accounts/3-4545",
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.4.0",
     "bootstrap": "4.6.2",
     "buffer": "^6.0.3",
     "chart.js": "3.9.1",
     "classnames": "2.3.2",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "crypto-browserify": "^3.12.0",
+    "express": "^4.18.2",
     "firebase": "^10.5.2",
     "fs": "^0.0.1-security",
-    "jsonwebtoken": "^9.0.2",
+    "jose": "^5.1.1",
+    "jose-node-cjs-runtime": "^5.1.1",
+    "jsonwebtoken": "8.5.1",
     "jwt-decode": "^4.0.0",
+    "node-jose": "^2.2.0",
     "os": "^0.1.2",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
@@ -59,6 +65,7 @@
     "reactstrap": "8.10.1"
   },
   "devDependencies": {
+    "jwt-sign": "^0.1.0",
     "typescript": "5.0.4"
   },
   "overrides": {

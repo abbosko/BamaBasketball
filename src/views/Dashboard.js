@@ -16,10 +16,12 @@
 
 */
 import React from "react";
+import { useEffect } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
+import {call_set_apis} from '../variables/apiFunctions.js'
 
 // reactstrap components
 import {
@@ -59,6 +61,13 @@ function Dashboard(props) {
   const stChart2Data = (name) => {
     setChart2Data(name);
   };*/
+
+  // calls apis on reload and on timer
+  useEffect(() => {
+    call_set_apis();
+    setInterval(call_set_apis, 1000 * 60 * 60)
+    });
+    
   return (
     <>
       <div className="content">

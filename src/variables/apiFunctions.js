@@ -1,21 +1,14 @@
-import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
+import { ref, set, get} from "firebase/database";
 
 
 
-import * as constants from 'constants.js'
-
-import {genToken, genHawkinToken} from '../genToken.js';
+import * as constants from '../constants.js'
+import {db} from '../index.js'
+import { genHawkinToken, genToken} from '../genToken.js';
 
  
 // set up 
-const db = getDatabase();
-
-const token = genToken();
-
-
-
-
-
+//const token = genToken();
 
 
 // const dbListener = ref(db, 'KinexonStats');
@@ -23,19 +16,48 @@ const token = genToken();
 //   const data = snapshot.val();
 //   PlayerDashboard(postElement, data);
 // });
+export async function addPlayer(){
+    // call apis to get IDS
+    // set in player table
+}
 
+export async function call_set_apis() {
+   // setFirstBeatSessions();
+    setKinexonStats();
+    //setHawkins();
+}
 
+// get player functions, needed for adding new players
 
 // when adding new player, call api to get player id
-// async function getKinexonPlayers(){
-// }
+export async function getKinexonPlayers(){
+    let kinexonplayers = [];
+    kinexonplayers = await fetch((constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
+        },
+});
+
+    let kinexonResponse = await kinexonplayers.json();
+    for(let i = 0; i < kinexonResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto h
+        const m = kinexonResponse.data[i];
+
+    }
+    return kinexonplayers;
+}
+
+
+
+//firstbeat = apiFirstBeatAthletes
+// kinexon = 
 
 export async function getHawkinsPlayers(){
         let hawkPlayer = [];
     
         let hawkinPlayers = await fetch((constants.HAWKINS_URL).concat('/athletes'), {
             headers: {
-                Authorization: 'Bearer ' + await token.genHawkinToken()
+                Authorization: 'Bearer ' + await genHawkinToken()
             }
         });
     
@@ -87,19 +109,20 @@ function FBAthlete(fname, lname, email, id) {
     this.id = id;
 }
 
-// loaded all data from jan 1 2023 - 10/22
+//loaded all data from jan 1 2023 - 10/22
 var min_session_date = '2023-06-01%2000%3A00%3A00';
 var today = '2023-10-31%2000%3A00%3A00';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
-var last_kinexon_session = new Date().toISOString();
+var last_kinexon_session = '2023-10-31%2000%3A00%3A00';
 
 async function getKinexonSessions(){
-    //var today = new Date().toISOString();
-    //let datetime_array = last_kinexon_session.split('T');
-    //let min_session_date = datetime_array[0].toISOString();
-    //min_session_date = min_session_date + "T00:00:00Z";
+    // var today = new Date().toISOString();
+    // let datetime_array = last_kinexon_session.split('T');
+    // let min_session_date = datetime_array[0].toISOString();
+    // min_session_date = min_session_date + "T00:00:00Z";
+    var today = '2023-11-26%2000%3A00%3A00';
 
-   return await fetch((constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+   return await fetch((constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', '2023-10-31%2000%3A00%3A00', '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
@@ -107,6 +130,7 @@ async function getKinexonSessions(){
     }) 
     .then(response => { 
         if (response.ok) { 
+            console.log(response)
             return response.json();
         } else { 
             console.log(response.json())
@@ -219,7 +243,7 @@ const apiHawkinsStats = async (datetime) => {
 
     let hawkinStats = await fetch((constants.HAWKINS_URL).concat('?from=', datetime), {
         headers: {
-            Authorization: 'Bearer ' + await token.genHawkinToken()
+            Authorization: 'Bearer ' + await genHawkinToken()
         }
     });
 
@@ -277,7 +301,7 @@ async function setHawkins() {
 * Firstbeat API calls! :)
 */
 
-let fbAuth = 'Bearer ' + genToken();                // generates authorization token
+let fbAuth = 'Bearer ' + await genToken();              // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
 
@@ -313,16 +337,18 @@ async function  apiFirstBeatSessions(last_session_date) {
     let datetime_array = last_session_date.split('T');
     let session_date = datetime_array[0];
 
-   const response = await fetch((constants.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
+
+   const response = await fetch(('/teams/17688/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
         headers: {
             Authorization: fbAuth,
-            "X-Api-Key": constants.FIRSTBEAT_API_KEY
-        }
+            "X-Api-Key": constants.FIRSTBEAT_API_KEY,
+        },
     });
         if (response.ok) { 
              data = await response.json()
          
         } else { 
+            console.log(response);
             throw new Error('API request failed'); 
         } 
         return  data.sessions;
@@ -395,12 +421,13 @@ async function processFBsession(data, sessionID){
 }
     
 var last_session_date = new Date();     // Keeping Last session date in memory to reload from this time
-last_session_date.setFullYear(2023,11,1);
+last_session_date.setFullYear(2023,10,1);
 last_session_date = last_session_date.toISOString()
 
 
 // this is the function to call to grab fb data from api and set in db
-async function setFirstBeatSessions(){
+export async function setFirstBeatSessions(){
+    console.log(last_session_date);
   let  sessions = await apiFirstBeatSessions(last_session_date);
  
    for(let i=0; i < sessions.length; i++){
@@ -410,6 +437,3 @@ async function setFirstBeatSessions(){
         last_session_date = sessions[i].endTime;
         }
    }
-
-
-

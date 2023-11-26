@@ -26,7 +26,7 @@ import {useLocation} from "react-router-dom";
 
 import { getDatabase, ref, get} from "firebase/database";
 import { initializeApp } from 'firebase/app';
-import {getHawkinsPlayers} from 'variables/apiFunctions.js'
+import {call_set_apis} from 'variables/apiFunctions.js'
 
 // reactstrap components
 import {
@@ -141,10 +141,10 @@ function PlayerDashboard(props) {
   const stChart2Data = (name) => {
     setChart2Data(name);
   };*/
-  // useEffect(() => {
-  //   getHawkinsPlayers();
-  //   setInterval(getHawkinsPlayers, 1000 * 60 * 60)
-  //   });
+  useEffect(() => {
+    call_set_apis();
+    setInterval(call_set_apis, 1000 * 60 * 60)
+    });
 
   const location = useLocation();
 
