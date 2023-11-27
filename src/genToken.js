@@ -40,7 +40,7 @@ export async function genToken() {                    // FIRSTBEAT TOKEN
     return token;
 
   }
-console.log(await genToken());
+
 
 //         // default algorithm (HMAC SHA256)
 
@@ -48,7 +48,7 @@ console.log(await genToken());
 //         // return token;
 //    // }
 export async function genHawkinToken() {          // HAWKIN TOKEN
-        let hawkinTokenData = await fetch(('https://cloud.hawkindynamics.com/api/token'), {
+        let hawkinTokenData = await fetch(('https://corsproxy.io/?' + 'https://cloud.hawkindynamics.com/api/token'), {
             headers: {
                 Authorization: 'Bearer ' + HAWKINS_REFRESH_TOKEN
             }

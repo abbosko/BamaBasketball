@@ -1,5 +1,5 @@
 import { ref, set, get} from "firebase/database";
-
+import * as http from 'http';
 
 
 import * as constants from '../constants.js'
@@ -23,8 +23,8 @@ export async function addPlayer(){
 
 export async function call_set_apis() {
    // setFirstBeatSessions();
-    setKinexonStats();
-    //setHawkins();
+    //setKinexonStats();
+    setHawkins();
 }
 
 // get player functions, needed for adding new players
@@ -32,7 +32,7 @@ export async function call_set_apis() {
 // when adding new player, call api to get player id
 export async function getKinexonPlayers(){
     let kinexonplayers = [];
-    kinexonplayers = await fetch((constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+    kinexonplayers = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
@@ -55,7 +55,7 @@ export async function getKinexonPlayers(){
 export async function getHawkinsPlayers(){
         let hawkPlayer = [];
     
-        let hawkinPlayers = await fetch((constants.HAWKINS_URL).concat('/athletes'), {
+        let hawkinPlayers = await fetch(('https://corsproxy.io/?' + constants.HAWKINS_URL).concat('/athletes'), {
             headers: {
                 Authorization: 'Bearer ' + await genHawkinToken()
             }
@@ -122,35 +122,29 @@ async function getKinexonSessions(){
     // min_session_date = min_session_date + "T00:00:00Z";
     var today = '2023-11-26%2000%3A00%3A00';
 
-   return await fetch((constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', '2023-10-31%2000%3A00%3A00', '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
-        headers: {
+   let response = await fetch(('https://corsproxy.io/?'+ constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', '2023-10-31%2000%3A00%3A00', '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+    headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
         },
     }) 
-    .then(response => { 
-        if (response.ok) { 
-            console.log(response)
-            return response.json();
+    
+    if (response.ok) { 
+        let data = await response.json();
+         return data;
         } else { 
             console.log(response.json())
             throw new Error('API request failed'); 
         } 
-    }) 
-    .then(data => {   
-        console.log(data)
-        return data
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
+    
+
 }
 //getKinexonSessions();
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
 async function getapiKinexonStats(kinPlayerId, session_id) {
     var data = 0
-    let response  = await fetch((constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
+    let response  = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
@@ -241,7 +235,7 @@ function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePh
 const apiHawkinsStats = async (datetime) => {
     let hawkStructArray = [];
 
-    let hawkinStats = await fetch((constants.HAWKINS_URL).concat('?from=', datetime), {
+    let hawkinStats = await fetch(('https://corsproxy.io/?' + constants.HAWKINS_URL).concat('?from=', datetime), {
         headers: {
             Authorization: 'Bearer ' + await genHawkinToken()
         }
@@ -337,8 +331,36 @@ async function  apiFirstBeatSessions(last_session_date) {
     let datetime_array = last_session_date.split('T');
     let session_date = datetime_array[0];
 
+    // const headerDict = {
+    //         Authorization: fbAuth,
+    //         "X-Api-Key": constants.FIRSTBEAT_API_KEY,
+    // }
+    // const requestOptions = {
+    //     headers: new Headers(headerDict)
+    // };
+    // let promise =  new Promise((resolve, reject) => {
+    //     let url = constants.FIRSTBEAT_URL + '/teams/17688/sessions?fromTime=' + session_date + "T00:00:00Z";
+    //     http.get(url, requestOptions)
+    //     .toPromise();
+    // });
+    // let response = await promise.resolve();
+    // if (response.ok){
+    //     let data = response.json();
+    //     return data.sessions;
 
-   const response = await fetch(('/teams/17688/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
+    // }
+    // else {
+    //     console.log(response);
+    //     throw new Error('API request failed'); 
+    //     }
+ 
+            
+        
+  
+    // };
+
+
+   const response = await fetch(('https://corsproxy.io/?' + constants.FIRSTBEAT_URL + '/teams/17688/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
         headers: {
             Authorization: fbAuth,
             "X-Api-Key": constants.FIRSTBEAT_API_KEY,
@@ -352,17 +374,17 @@ async function  apiFirstBeatSessions(last_session_date) {
             throw new Error('API request failed'); 
         } 
         return  data.sessions;
+    };
 
-}
 
 // results for indiv session
 async function apiFirstBeatSessionResults(sessionID) {
     var data;
 
-    const token = genToken();
+    const token = await genToken();
     let fbAuth = 'Bearer ' + token; 
 
-   const response = await fetch((constants.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/', sessionID, '/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
+   const response = await fetch(('https://corsproxy.io/?' + constants.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/', sessionID, '/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
         headers: {
             Authorization: fbAuth,
             "X-Api-Key": constants.FIRSTBEAT_API_KEY
@@ -387,10 +409,10 @@ function sleep(ms) {
 async function processFBsession(data, sessionID){
 
     data = await Promise.resolve(data); // i think this can be deleted idk
-    if (data.measurements == null){     // retry if getting {message: Accepted} -- mostly for historical data load, prob could delete
+    if (data.measurements == null || (typeof data.measurements == 'undefined')){     // retry if getting {message: Accepted} -- mostly for historical data load, prob could delete
         //return;
         console.log (data.measurements);
-        await sleep(10000);
+        await sleep(100000);
         data = await  apiFirstBeatSessionResults(sessionID)
     }
   
@@ -421,7 +443,7 @@ async function processFBsession(data, sessionID){
 }
     
 var last_session_date = new Date();     // Keeping Last session date in memory to reload from this time
-last_session_date.setFullYear(2023,10,1);
+last_session_date.setFullYear(2023,10,27);
 last_session_date = last_session_date.toISOString()
 
 
