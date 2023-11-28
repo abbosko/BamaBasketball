@@ -138,7 +138,7 @@ async function getKinexonSessions(){
     
 
 }
-console.log( Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64'))
+
 //getKinexonSessions();
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
