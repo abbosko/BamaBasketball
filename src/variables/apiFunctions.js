@@ -1,9 +1,8 @@
 import { ref, set, get} from "firebase/database";
-import * as http from 'http';
 
 
-import * as constants from '../constants.js'
-import {db} from '../index.js'
+import * as constants from '../constants.js';
+import {db} from '../index.js';
 import { genHawkinToken, genToken} from '../genToken.js';
 
  
@@ -22,9 +21,9 @@ export async function addPlayer(){
 }
 
 export async function call_set_apis() {
-   // setFirstBeatSessions();
+   setFirstBeatSessions();
+   setHawkins();
     //setKinexonStats();
-    setHawkins();
 }
 
 // get player functions, needed for adding new players
@@ -139,6 +138,7 @@ async function getKinexonSessions(){
     
 
 }
+console.log( Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64'))
 //getKinexonSessions();
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
@@ -417,6 +417,7 @@ async function processFBsession(data, sessionID){
     }
   
     for(let i = 0; i < data.measurements.length; i++) {
+        console.log(data.measurements)
         let session = new FirstbeatPlayerSession(0,0,0);
         session.athlete_id = data.measurements[i].athleteId;
         let datetime_array = data.measurements[i].startTime.split('T');
