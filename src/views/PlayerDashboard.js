@@ -327,7 +327,7 @@ function PlayerDashboard(props) {
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
-                    <h5 className="card-category">Player Stats</h5>
+                    <h5 className="card-category">Kinexon Stats</h5>
                     <CardTitle tag="h2">Training Impulse</CardTitle>
                   </Col>
                   <Col sm="6">
@@ -346,7 +346,7 @@ function PlayerDashboard(props) {
                         onClick={() => setBgChartData("data1")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Monthly
+                          Trimp
                         </span>
                         <span className="d-block d-sm-none">
                           <i className="tim-icons icon-single-02" />
@@ -363,7 +363,7 @@ function PlayerDashboard(props) {
                         onClick={() => setBgChartData("data2")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Weekly
+                          Training Status
                         </span>
                         <span className="d-block d-sm-none">
                           <i className="tim-icons icon-gift-2" />
@@ -380,7 +380,7 @@ function PlayerDashboard(props) {
                         onClick={() => setBgChartData("data3")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Daily
+                          Calories
                         </span>
                         <span className="d-block d-sm-none">
                           <i className="tim-icons icon-tap-02" />
@@ -392,7 +392,7 @@ function PlayerDashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  <Bar
                     data={chartExample1[bigChartData]}
                     options={chartExample1.options}
                   />
@@ -412,7 +412,7 @@ function PlayerDashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  <Bar
                     data={chartExample2.data}
                     options={chartExample2.options}
                   />
@@ -449,7 +449,7 @@ function PlayerDashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  <Bar
                     data={chartExample4.data}
                     options={chartExample4.options}
                   />
@@ -468,7 +468,7 @@ function PlayerDashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  <Bar
                     data={chartExample2.data}
                     options={chartExample2.options}
                   />
