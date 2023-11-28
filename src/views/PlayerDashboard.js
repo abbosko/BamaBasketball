@@ -151,7 +151,7 @@ function PlayerDashboard(props) {
   return (
     <>
       <div className="content">
-        <h1>Player Statisitcs</h1>
+        <h1>Athlete's Locker</h1>
         <h2 style={{color: '#a9a9a9'}}>{location.state.fname} {location.state.lname}</h2>
         <Row>
           
