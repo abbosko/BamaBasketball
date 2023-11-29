@@ -46,10 +46,10 @@ import {
 
 // core components
 import {
-  chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4,
+  dashboardFirstbeatData,
+  dashboardExample2,
+  dashboardExample3,
+  dashboardExample4,
 } from "variables/charts.js";
 
 function Dashboard(props) {
@@ -144,8 +144,8 @@ function Dashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample1[bigChartData]}
-                    options={chartExample1.options}
+                    data={dashboardFirstbeatData[bigChartData]}
+                    options={dashboardFirstbeatData.options}
                   />
                 </div>
               </CardBody>
@@ -164,8 +164,8 @@ function Dashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={dashboardExample2.data}
+                    options={dashboardExample2.options}
                   />
                 </div>
               </CardBody>
@@ -183,8 +183,8 @@ function Dashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample3.data}
-                    options={chartExample3.options}
+                    data={dashboardExample3.data}
+                    options={dashboardExample3.options}
                   />
                 </div>
               </CardBody>
@@ -201,8 +201,8 @@ function Dashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample4.data}
-                    options={chartExample4.options}
+                    data={dashboardExample4.data}
+                    options={dashboardExample4.options}
                   />
                 </div>
               </CardBody>
@@ -219,8 +219,8 @@ function Dashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={dashboardExample2.data}
+                    options={dashboardExample2.options}
                   />
                 </div>
               </CardBody>
@@ -239,8 +239,8 @@ function Dashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={dashboardExample2.data}
+                    options={dashboardExample2.options}
                   />
                 </div>
               </CardBody>
