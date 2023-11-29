@@ -45,20 +45,11 @@ const dashroutes = Object.values(playerlist).map((val, key) => {
 var routes = [
   {
     path: "/dashboard",
-    name: "Dashboard",
+    name: "Team Dashboard",
     side: "True",
     rtlName: "لوحة القيادة",
-    icon: "tim-icons icon-chart-pie-36",
+    icon: "tim-icons icon-trophy",
     component: <Dashboard />,
-    layout: "/admin",
-  },
-  {
-    path: "/icons",
-    name: "Icons",
-    side: "True",
-    rtlName: "الرموز",
-    icon: "tim-icons icon-atom",
-    component: <Icons />,
     layout: "/admin",
   },
   {
@@ -70,15 +61,7 @@ var routes = [
     component: <UserProfile />,
     layout: "/admin",
   },
-  {
-    path: "/tables",
-    name: "Table List",
-    side: "True",
-    rtlName: "قائمة الجدول",
-    icon: "tim-icons icon-puzzle-10",
-    component: <TableList />,
-    layout: "/admin",
-  },
+
   {
     path: "/players",
     name: "Players",
