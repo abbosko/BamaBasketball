@@ -22,6 +22,7 @@ import UserProfile from "views/UserProfile.js";
 import Players from "views/Players.js"
 import Team from "views/Team.js"
 import PlayerDashboard from "views/PlayerDashboard.js";
+import SignIn from "views/SignIn.js";
 import { getPlayerWrap } from "./views/Players.js";
 
 const playerlist = await getPlayerWrap();
@@ -104,6 +105,15 @@ var routes = [
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-trophy",
     component: <PlayerDashboard />,
+    layout: "/admin",
+  },
+  {
+    path: "/signin",
+    name: "SignIn",
+    side: "True",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-trophy",
+    component: <SignIn />,
     layout: "/admin",
   },
 ].concat(dashroutes);
