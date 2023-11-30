@@ -112,17 +112,17 @@ export async function getKinexonWrap(){
 const kinList = await getKinexonWrap();
 
 // function to get average stats
-async function getAverage(){
-  var average = 0;
-  var counter = 0;
+// async function getAverage(){
+//   var average = 0;
+//   var counter = 0;
 
-  {Object.values(kinList).map((val, key) => { 
-    average += val.accel_load_accum;
-    counter ++;
-  })}
+//   {Object.values(kinList).map((val, key) => { 
+//     average += val.accel_load_accum;
+//     counter ++;
+//   })}
 
-  return average/counter;
-}
+//   return average/counter;
+// }
 // firstbeat data
 async function getPlayerFB(){
   const db = getDatabase(app);
@@ -333,39 +333,51 @@ function Dashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Date</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Accumulated Acceleration Load</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Accumulated Acceleration Load per Minute</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Total Distance</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Changes of Orientation</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Max Speed</td>
-                      <td>-- mph</td>
-                    </tr>
-                    <tr>
-                      <td>Max Jump Height</td>
-                      <td>-- ft</td>
-                    </tr>
-                    <tr>
-                      <td>Jump Count</td>
-                      <td>--</td>
-                    </tr>
-
+                  {Object.values(kinList).map((val, key) => {
+                        let ans = Object.values(val).map((val2, key2) => {
+                          var accAccVal = 0;
+                          var accAccCount = 0;
+                          accAccVal += val2.accel_load_accum;
+                          accAccCount =+ 1;
+                          var accAccAv = accAccVal/accAccCount;
+                      return(
+                      <>
+                        <tr>
+                          <td>Date</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Accumulated Acceleration Load</td>
+                          <td>{accAccAv}</td>
+                        </tr>
+                        <tr>
+                          <td>Accumulated Acceleration Load per Minute</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Total Distance</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Changes of Orientation</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Max Speed</td>
+                          <td>-- mph</td>
+                        </tr>
+                        <tr>
+                          <td>Max Jump Height</td>
+                          <td>-- ft</td>
+                        </tr>
+                        <tr>
+                          <td>Jump Count</td>
+                          <td>--</td>
+                        </tr>
+                      </>
+                         ) } )
+                        return ans;
+                    })}
                   </tbody>
                 </Table>
               </CardBody>
