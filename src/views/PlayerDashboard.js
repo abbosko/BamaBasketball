@@ -41,27 +41,11 @@ import {
   Col,
 } from "reactstrap";
 
-// core components
 import {
-  firstbeatData,
-  duration,
-  accumAccelLoad,
-  accumAccelLoadMin,
-  totalDistance,
-  maxSpeed,
-  maxJumpHeight,
-  jumpCount,
-  changesOfOrientation,
-  hawkJumpHeight,
-  mRSI,
-  timeToTakeoff,
-  brakingPhase,
-  peakRelativePropulsivePower,
-  brakingPower,
-  brakingNetImpulse,
-  propulsiveNetImpulse,
-  LRAvgBrakingForce,
-} from "variables/charts.js";
+  chart_options,
+  chart2_options,
+  chart3_options,
+} from "../variables/charts.js"
 
 const firebaseConfig = {
   apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
@@ -189,54 +173,68 @@ export async function getFBWrap(){
 }
 const fbList = await getFBWrap();
 
+var fbMatrix = [];
+async function getGraphFB(){
+  const db = getDatabase(app);
+  const fbRef = query(ref(db, 'FirstbeatStats/'), limitToLast(7));
+  let snapshot = await get(fbRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getFBGraphWrap(){
+  let data = await getGraphFB();
+  {Object.values(data).map((val, key) => {
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.player_id, val2.energyConsumptionTotal, val2.playerStatusScore, val2.trimp);
+      fbMatrix.push(arr);
+    })
+  })}
+}
+getFBGraphWrap();
+
+// get data list & return data struct for graph
+function graphData(mtx, id, col, unit, c) {
+  let data_arr = [];
+
+  // iterate through matrix & push back players' data on array
+  for(let i = 0; i < mtx.length; i++) {
+    if(mtx[i][0] == id) {
+      data_arr.push(mtx[i][col]);
+    }
+  }
+
+  return {
+    labels: [1, 2, 3, 4, 5, 6, 7],
+    datasets: [
+      {
+        label: unit,
+        fill: true,
+        backgroundColor: "",
+        borderColor: c,
+        borderWidth: 2,
+        borderDash: [],
+        borderDashOffset: 0.0,
+        pointBackgroundColor: "#1f8ef1",
+        pointBorderColor: "rgba(255,255,255,0)",
+        pointHoverBackgroundColor: "#1f8ef1",
+        pointBorderWidth: 20,
+        pointHoverRadius: 4,
+        pointHoverBorderWidth: 15,
+        pointRadius: 4,
+        data: data_arr,
+      },
+    ],
+  };
+};
 
 function PlayerDashboard(props) {
-  const [bigChartData, setbigChartData] = React.useState("data1");
-  const setBgChartData = (name) => {
-    setbigChartData(name);
-  };
-  /*const [chart2Data, setChart2Data] = React.useState("data1");
-  const stChart2Data = (name) => {
-    setChart2Data(name);
-  };*/
-
-
   const location = useLocation();
-
-  // get data list & return data struct for graph
-  function graphData(mtx, id, col) {
-    let data_arr = [];
-
-    // iterate through matrix & push back players' data on array
-    for(let i = 0; i < mtx.length; i++) {
-      if(mtx[i][0] == id) {
-        data_arr.push(mtx[i][col]);
-      }
-    }
-
-    return {
-      labels: [1, 2, 3, 4, 5, 6, 7],
-      datasets: [
-        {
-          label: "Status",
-          fill: true,
-          backgroundColor: "",
-          borderColor: "#1f8ef1",
-          borderWidth: 2,
-          borderDash: [],
-          borderDashOffset: 0.0,
-          pointBackgroundColor: "#1f8ef1",
-          pointBorderColor: "rgba(255,255,255,0)",
-          pointHoverBackgroundColor: "#1f8ef1",
-          pointBorderWidth: 20,
-          pointHoverRadius: 4,
-          pointHoverBorderWidth: 15,
-          pointRadius: 4,
-          data: data_arr,
-        },
-      ],
-    };
-  };
 
   return (
     <>
@@ -416,79 +414,55 @@ function PlayerDashboard(props) {
           </Col>          
         </Row>
         <Row>
-          <Col xs="12">
+          <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <Row>
-                  <Col className="text-left" sm="6">
-                    <h5 className="card-category">Kinexon Stats</h5>
-                    <CardTitle tag="h2">Training Impulse</CardTitle>
-                  </Col>
-                  <Col sm="6">
-                    <ButtonGroup
-                      className="btn-group-toggle float-right"
-                      data-toggle="buttons"
-                    >
-                      <Button
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data1",
-                        })}
-                        color="info"
-                        id="0"
-                        size="sm"
-                        onClick={() => setBgChartData("data1")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Trimp
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-single-02" />
-                        </span>
-                      </Button>
-                      <Button
-                        color="info"
-                        id="1"
-                        size="sm"
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data2",
-                        })}
-                        onClick={() => setBgChartData("data2")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Training Status
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-gift-2" />
-                        </span>
-                      </Button>
-                      <Button
-                        color="info"
-                        id="2"
-                        size="sm"
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data3",
-                        })}
-                        onClick={() => setBgChartData("data3")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Calories
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-tap-02" />
-                        </span>
-                      </Button>
-                    </ButtonGroup>
-                  </Col>
-                </Row>
+                <h5 className="card-category">Firstbeat Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Trimp
+                </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={firstbeatData[bigChartData]}
-                    options={firstbeatData.options}
+                    data={graphData(fbMatrix, location.state.firstbeat_id, 3, "Trimp", "#ff5ed1")}
+                    options={chart_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Firstbeat Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Training Status Score
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(fbMatrix, location.state.firstbeat_id, 2, "Status", "#ff5ed1")}
+                    options={chart_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Firstbeat Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Total Energy Consumption
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(fbMatrix, location.state.firstbeat_id, 1, "Calories", "#ff5ed1")}
+                    options={chart_options}
                   />
                 </div>
               </CardBody>
@@ -507,8 +481,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 4)}
-                    options={duration.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 4, "Duration", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -519,15 +493,15 @@ function PlayerDashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Kinexon Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-delivery-fast text-primary" />{" "}
+                  <i className="tim-icons icon-bell-55 text-info" />{" "}
                   Accumulated Acceleration Load
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id , 1)}
-                    options={accumAccelLoad.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id , 1, "AAL", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -538,14 +512,14 @@ function PlayerDashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Kinexon Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-send text-success" /> Accumulated Accelerated Load/min
+                  <i className="tim-icons icon-bell-55 text-info" /> Accumulated Accelerated Load/min
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 2)}
-                    options={accumAccelLoadMin.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 2, "AAL/min", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -564,8 +538,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 8)}
-                    options={totalDistance.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 8, "mi", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -582,8 +556,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 7)}
-                    options={maxSpeed.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 7, "mph", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -600,8 +574,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 6)}
-                    options={maxJumpHeight.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 6, "ft", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -620,8 +594,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 5)}
-                    options={jumpCount.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 5, "Count", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -638,8 +612,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 3)}
-                    options={changesOfOrientation.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 3, "Changes", "#66edff")}
+                    options={chart2_options}
                   />
                 </div>
               </CardBody>
@@ -658,8 +632,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 1)}
-                    options={hawkJumpHeight.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 1, "m", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -676,8 +650,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 2)}
-                    options={mRSI.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 2, "mRSI", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -694,8 +668,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 3)}
-                    options={timeToTakeoff.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 3, "s", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -714,8 +688,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 4)}
-                    options={brakingPhase.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 4, "s", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -732,8 +706,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 5)}
-                    options={peakRelativePropulsivePower.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 5, "W/kg", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -750,8 +724,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 6)}
-                    options={brakingPower.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 6, "W", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -770,8 +744,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 7)}
-                    options={brakingNetImpulse.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 7, "N.s", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -788,8 +762,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 8)}
-                    options={propulsiveNetImpulse.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 8, "N.s", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>
@@ -806,8 +780,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 9)}
-                    options={LRAvgBrakingForce.options}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 9, "%", "#72f760")}
+                    options={chart3_options}
                   />
                 </div>
               </CardBody>

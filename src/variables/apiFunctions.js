@@ -1,4 +1,4 @@
-import { ref, set, get} from "firebase/database";
+import { ref, set, get, limitToLast, query} from "firebase/database";
 
 
 import * as constants from '../constants.js';
@@ -16,22 +16,59 @@ import { Buffer } from "buffer";
 //   PlayerDashboard(postElement, data);
 // });
 export async function addPlayer(){
+    var kin_id;
+    kinexon_players.append(kin_id);
     // call apis to get IDS
     // set in player table
 }
 
-export async function call_set_apis() {
-   setFirstBeatSessions();
-   setHawkins();
-    //setKinexonStats();
+
+
+async function get_last_loaded_session_date(db){
+    const logRef = query(ref(db, 'log/'), limitToLast(1));
+    let snapshot = await get(logRef);
+    
+    if (snapshot.exists()) {
+      let snap  = await snapshot.val();
+      console.log(snap.date)
+      return snap.date;
+    } else {
+      console.log("No data available");
+    }       
+  }
+
+
+// // dates to use in api calls
+// const today = new Date().toISOString();
+// const last_session_date = get_last_loaded_session_date().date;
+// console.log(last_session_date)
+var last_session_date;
+export async function call_set_apis(db) {
+    try {
+        last_session_date = await get_last_loaded_session_date(db)
+            setFirstBeatSessions();
+            setHawkins();
+            setKinexonStats(last_session_date);
+    set(ref(db, 'log'), {
+        date: today
+    });
+    }
+    catch(e){
+        console.log(e);
+    }
 }
+
+// dates to use in api calls
+const today = new Date().toISOString();
+ //last_session_date = get_last_loaded_session_date().date;
+//console.log(last_session_date)
 
 // get player functions, needed for adding new players
 
 // when adding new player, call api to get player id
 export async function getKinexonPlayers(){
     let kinexonplayers = [];
-    kinexonplayers = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+    kinexonplayers = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', last_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
@@ -68,7 +105,7 @@ export async function getHawkinsPlayers(){
         return hawkPlayer;
     }
 
-const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
+const kinexon_players = [79,80,71,76,69,72,74, 75,81,68,66,78,82];
 
 async function getPlayers(){
 const playerRef = ref(db, 'Players');
@@ -109,8 +146,8 @@ function FBAthlete(fname, lname, email, id) {
 }
 
 //loaded all data from jan 1 2023 - 10/22
-var min_session_date = '2023-06-01%2000%3A00%3A00';
-var today = '2023-10-31%2000%3A00%3A00';
+
+
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
 var last_kinexon_session = '2023-10-31%2000%3A00%3A00';
 
@@ -119,14 +156,15 @@ async function getKinexonSessions(){
     // let datetime_array = last_kinexon_session.split('T');
     // let min_session_date = datetime_array[0].toISOString();
     // min_session_date = min_session_date + "T00:00:00Z";
-    var today = '2023-11-26%2000%3A00%3A00';
-
-   let response = await fetch(('https://corsproxy.io/?'+ constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', '2023-10-31%2000%3A00%3A00', '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+   let response = await fetch(('https://corsproxy.io/?'+ constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', last_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
     headers: {
             'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64'),
+            'Access-Control-Allow-Origin': '*'
         },
-    }) 
+    }).catch((error) => {
+          console.error(error);
+        });
     
     if (response.ok) { 
         let data = await response.json();
@@ -149,7 +187,8 @@ async function getapiKinexonStats(kinPlayerId, session_id) {
      response  = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64'),
+            'Access-Control-Allow-Origin': '*'
         }}); 
     }
     catch(err){
@@ -263,9 +302,10 @@ const apiHawkinsStats = async (datetime) => {
 }
 
 async function setHawkins() {
-    var yesterday = Math.floor((Date.now() - 86400000) / 1000);         // get epoch timestamp from 24 hours ago (in seconds)
-    //yesterday = 1698631212;
-    let stats = await apiHawkinsStats(yesterday);
+    var epoch_last_session = new Date(last_session_date);
+    epoch_last_session = epoch_last_session.valueOf();
+
+    let stats = await apiHawkinsStats(epoch_last_session);
     for(let i = 0; i < stats.length; i++) {
         var d = new Date(0);
         d.setUTCSeconds(stats[i].timestamp);
@@ -456,11 +496,6 @@ async function processFBsession(data, sessionID){
     }
 }
     
-var last_session_date = new Date();     // Keeping Last session date in memory to reload from this time
-last_session_date.setFullYear(2023,10,27);
-last_session_date = last_session_date.toISOString()
-
-
 // this is the function to call to grab fb data from api and set in db
 export async function setFirstBeatSessions(){
     console.log(last_session_date);
