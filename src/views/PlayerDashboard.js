@@ -232,6 +232,7 @@ function PlayerDashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
+                    //getting the stuff from the list
                     {Object.values(hawkList).map((val, key) => {
                       if(val.player_id == location.state.hawkins_id) {
                         return (
