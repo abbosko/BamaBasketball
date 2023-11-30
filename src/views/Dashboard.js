@@ -23,6 +23,11 @@ import classNames from "classnames";
 import { Line, Bar } from "react-chartjs-2";
 import {call_set_apis} from '../variables/apiFunctions.js'
 
+import { getDatabase, ref, get} from "firebase/database";
+import { initializeApp } from 'firebase/app';
+//import {call_set_apis} from 'variables/apiFunctions.js'
+
+
 // reactstrap components
 import {
   Button,
@@ -51,6 +56,92 @@ import {
   dashboardExample3,
   dashboardExample4,
 } from "variables/charts.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
+  authDomain: "uambb-2def3.firebaseapp.com",
+  projectId: "uambb-2def3",
+  storageBucket: "uambb-2def3.appspot.com",
+  messagingSenderId: "210177408912",
+  appId: "1:210177408912:web:b608c7e17caa478eb27d15",
+  measurementId: "G-EYZBG3EE9B",
+  databaseURL: "https://uambb-2def3-default-rtdb.firebaseio.com/"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// hawkin data
+async function getPlayerHawk(){
+  const db = getDatabase(app);
+  const hawkRef = ref(db, 'HawkinStats/2023-10-24');
+  let snapshot = await get(hawkRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }       
+}
+  
+export async function getHawkWrap(){
+  let data = await getPlayerHawk();
+  return data;
+}
+const hawkList = await getHawkWrap();
+
+// kinexon data
+async function getPlayerKinexon(){
+  const db = getDatabase(app);
+  const kinRef = ref(db, 'KinexonStats/2023-10-27 14:34:15');
+  let snapshot = await get(kinRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getKinexonWrap(){
+  let data = await getPlayerKinexon();
+  return data;
+}
+const kinList = await getKinexonWrap();
+
+// function to get average stats
+// async function getAverage(){
+//   var average = 0;
+//   var counter = 0;
+
+//   {Object.values(kinList).map((val, key) => { 
+//     average += val.accel_load_accum;
+//     counter ++;
+//   })}
+
+//   return average/counter;
+// }
+// firstbeat data
+async function getPlayerFB(){
+  const db = getDatabase(app);
+  const fbRef = ref(db, 'FirstbeatStats/2023-11-01');
+  let snapshot = await get(fbRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }       
+}
+  
+export async function getFBWrap(){
+  let data = await getPlayerFB();
+  return data;
+}
+const fbList = await getFBWrap();
 
 function Dashboard(props) {
   const [bigChartData, setbigChartData] = React.useState("data1");
@@ -242,39 +333,51 @@ function Dashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Date</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Accumulated Acceleration Load</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Accumulated Acceleration Load per Minute</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Total Distance</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Changes of Orientation</td>
-                      <td>-</td>
-                    </tr>
-                    <tr>
-                      <td>Max Speed</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Max Jump Height</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Jump Count</td>
-                      <td>-</td>
-                    </tr>
-
+                  {Object.values(kinList).map((val, key) => {
+                        let ans = Object.values(val).map((val2, key2) => {
+                          var accAccVal = 0;
+                          var accAccCount = 0;
+                          accAccVal += val2.accel_load_accum;
+                          accAccCount++;
+                          var accAccAv = accAccVal/accAccCount;
+                      return(
+                      <>
+                        <tr>
+                          <td>Date</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Accumulated Acceleration Load</td>
+                          <td>{accAccCount}</td>
+                        </tr>
+                        <tr>
+                          <td>Accumulated Acceleration Load per Minute</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Total Distance</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Changes of Orientation</td>
+                          <td>--</td>
+                        </tr>
+                        <tr>
+                          <td>Max Speed</td>
+                          <td>-- mph</td>
+                        </tr>
+                        <tr>
+                          <td>Max Jump Height</td>
+                          <td>-- ft</td>
+                        </tr>
+                        <tr>
+                          <td>Jump Count</td>
+                          <td>--</td>
+                        </tr>
+                      </>
+                         ) } )
+                        return ans;
+                    })}
                   </tbody>
                 </Table>
               </CardBody>
