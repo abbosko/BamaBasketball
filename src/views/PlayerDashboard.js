@@ -170,11 +170,11 @@ function PlayerDashboard(props) {
   const setBgChartData = (name) => {
     setbigChartData(name);
   };
+  /*const [chart2Data, setChart2Data] = React.useState("data1");
+  const stChart2Data = (name) => {
+    setChart2Data(name);
+  };*/
 
-  useEffect(() => {
-    call_set_apis();
-    setInterval(call_set_apis, 1000 * 60 * 60)
-    });
 
   const location = useLocation();
 

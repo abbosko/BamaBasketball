@@ -16,6 +16,8 @@
 
 */
 import React from "react";
+import { useEffect } from "react";
+import {call_set_apis} from 'variables/apiFunctions.js'
 
 // reactstrap components
 import {

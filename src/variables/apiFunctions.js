@@ -21,9 +21,9 @@ export async function addPlayer(){
 }
 
 export async function call_set_apis() {
-   //setFirstBeatSessions();
-   //setHawkins();
-    setKinexonStats();
+   setFirstBeatSessions();
+   setHawkins();
+    //setKinexonStats();
 }
 
 // get player functions, needed for adding new players
@@ -264,7 +264,7 @@ const apiHawkinsStats = async (datetime) => {
 
 async function setHawkins() {
     var yesterday = Math.floor((Date.now() - 86400000) / 1000);         // get epoch timestamp from 24 hours ago (in seconds)
-
+    //yesterday = 1698631212;
     let stats = await apiHawkinsStats(yesterday);
     for(let i = 0; i < stats.length; i++) {
         var d = new Date(0);
@@ -283,7 +283,7 @@ async function setHawkins() {
         if(stats[i].propNetImp == undefined) stats[i].propNetImp = null;
         if(stats[i].LRBrakeForce == undefined) stats[i].LRBrakeForce = null;
 
-        set(ref(db, 'HawkinStats/' + d_array[0] + '/' + stats[i].timestamp), {
+        set(ref(db, 'HawkinStats/' + d_array[0] + '/' + stats[i].athleteId), {
             date : d_array[0],
             time : d_array[1],
             player_id : stats[i].athleteId,
@@ -298,6 +298,7 @@ async function setHawkins() {
             LRBrakeForce : stats[i].LRBrakeForce
         });
     }
+    console.log("Hawkins Load Complete")
 }
 
 //setHawkins();
@@ -471,4 +472,5 @@ export async function setFirstBeatSessions(){
         processFBsession(response, session_id);
         last_session_date = sessions[i].endTime;
         }
+        console.log('Firstbeat load complete')
    }
