@@ -16,8 +16,10 @@
 
 */
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 // nodejs library that concatenates classes
 import classNames from "classnames";
+import { UserAuth } from 'AuthContext.js';
 
 // reactstrap components
 import {
@@ -43,6 +45,19 @@ function AdminNavbar(props) {
   const [collapseOpen, setcollapseOpen] = React.useState(false);
   const [modalSearch, setmodalSearch] = React.useState(false);
   const [color, setcolor] = React.useState("navbar-transparent");
+
+  const { logout } = UserAuth();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');  
+      console.log('You are logged out')
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   React.useEffect(() => {
     window.addEventListener("resize", updateColor);
     // Specify how to clean up after this effect:
@@ -166,7 +181,8 @@ function AdminNavbar(props) {
                   <NavLink
                     //tag="li"
                     id="logout"
-                    href="/admin/SignIn"
+                    onClick={handleLogout}
+                    //href="/"
                   >
                     <DropdownItem className="nav-item">Log out
                     </DropdownItem>

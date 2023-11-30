@@ -15,9 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from "react";
 import {call_set_apis} from 'variables/apiFunctions.js'
+import { UserAuth } from 'AuthContext.js'
 
 // reactstrap components
 import {
@@ -35,6 +37,26 @@ import {
 } from "reactstrap";
 
 function SignIn() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { user } = UserAuth();
+  const { signIn } = UserAuth();
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('')
+    try {
+      await signIn(email, password)
+      navigate('/account')
+    } catch (e) {
+      setError(e.message)
+      console.log(e.message)
+    }
+  };
+
   return (
     <>
       <div className="content">
@@ -50,7 +72,7 @@ function SignIn() {
                     <Col className="pr-md-1" md="5">
                     <FormGroup>
                         <label htmlFor="exampleInputEmail1">
-                          Email address
+                          <p>Email address: {user && user.email}</p>
                         </label>
                         <Input placeholder="mike@email.com" type="email" />
                       </FormGroup>
