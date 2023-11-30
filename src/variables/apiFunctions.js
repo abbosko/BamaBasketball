@@ -1,4 +1,4 @@
-import { ref, set, get} from "firebase/database";
+import { ref, set, get, limitToLast, query} from "firebase/database";
 
 
 import * as constants from '../constants.js';
@@ -25,17 +25,17 @@ export async function addPlayer(){
 
 
 async function get_last_loaded_session_date(db){
-const logRef = ref(db, 'logs');
-let snapshot = await get(logRef);
-if (snapshot.exists()) {
-        let snap  = await snapshot.val();
-        console.log(snap)
-        return snap;
-
-      } else {
-        console.log("No data available");
-      }
-}
+    const logRef = query(ref(db, 'log/'), limitToLast(1));
+    let snapshot = await get(logRef);
+    
+    if (snapshot.exists()) {
+      let snap  = await snapshot.val();
+      console.log(snap.date)
+      return snap.date;
+    } else {
+      console.log("No data available");
+    }       
+  }
 
 
 // // dates to use in api calls
@@ -45,10 +45,9 @@ if (snapshot.exists()) {
 var last_session_date;
 export async function call_set_apis(db) {
     try {
-        last_session_date = get_last_loaded_session_date(db)
-        console.log()
-            //setFirstBeatSessions();
-            // setHawkins();
+        last_session_date = await get_last_loaded_session_date(db)
+            setFirstBeatSessions();
+            setHawkins();
             setKinexonStats(last_session_date);
     set(ref(db, 'log'), {
         date: today
@@ -106,7 +105,7 @@ export async function getHawkinsPlayers(){
         return hawkPlayer;
     }
 
-const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
+const kinexon_players = [79,80,71,76,69,72,74, 75,81,68,66,78,82];
 
 async function getPlayers(){
 const playerRef = ref(db, 'Players');
@@ -157,7 +156,6 @@ async function getKinexonSessions(){
     // let datetime_array = last_kinexon_session.split('T');
     // let min_session_date = datetime_array[0].toISOString();
     // min_session_date = min_session_date + "T00:00:00Z";
-
    let response = await fetch(('https://corsproxy.io/?'+ constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', last_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
     headers: {
             'Accept': 'application/json',
@@ -304,7 +302,9 @@ const apiHawkinsStats = async (datetime) => {
 }
 
 async function setHawkins() {
-    var epoch_last_session = last_session_date.getTime()
+    var epoch_last_session = new Date(last_session_date);
+    epoch_last_session = epoch_last_session.valueOf();
+
     let stats = await apiHawkinsStats(epoch_last_session);
     for(let i = 0; i < stats.length; i++) {
         var d = new Date(0);
