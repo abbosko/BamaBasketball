@@ -4,7 +4,7 @@ import { ref, set, get} from "firebase/database";
 import * as constants from '../constants.js';
 import {db} from '../index.js';
 import { genHawkinToken, genToken} from '../genToken.js';
-
+import { Buffer } from "buffer";
  
 // set up 
 //const token = genToken();
@@ -143,20 +143,25 @@ async function getKinexonSessions(){
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
 async function getapiKinexonStats(kinPlayerId, session_id) {
-    var data = 0
-    let response  = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
+    var data = 0;
+    var response;
+    try {
+     response  = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
         }}); 
-   
+    }
+    catch(err){
+        console.log(err)
+    }
     if (response.ok) { 
              data = await response.json();
         } 
     else { 
            response.json().then(data => {console.log(data)});
             console.log(data);
-            throw new Error('API request failed'); 
+            console.log('API request failed'); 
         } 
 
         return data;
@@ -184,8 +189,14 @@ async function setKinexonStats(){
     let sessions = await getKinexonSessions();
     for(let i=0; i< sessions.length; i++){
          for(let j=0; j< kinexon_players.length; j++){
-
-            let results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
+            var results;
+            try {
+             results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
+            }
+            catch(err) {
+                console.log(err);
+                await sleep(100000);
+            }
             if ( results.length == 0) {
                 console.log('No data for', kinexon_players[j] )
                 continue;
@@ -195,6 +206,7 @@ async function setKinexonStats(){
         }
      last_kinexon_session = sessions[i].start_session;
     }
+    console.log('Kinexon upload successful');
 }
 
 
@@ -252,7 +264,7 @@ const apiHawkinsStats = async (datetime) => {
 
 async function setHawkins() {
     var yesterday = Math.floor((Date.now() - 86400000) / 1000);         // get epoch timestamp from 24 hours ago (in seconds)
-
+    //yesterday = 1698631212;
     let stats = await apiHawkinsStats(yesterday);
     for(let i = 0; i < stats.length; i++) {
         var d = new Date(0);
@@ -271,7 +283,7 @@ async function setHawkins() {
         if(stats[i].propNetImp == undefined) stats[i].propNetImp = null;
         if(stats[i].LRBrakeForce == undefined) stats[i].LRBrakeForce = null;
 
-        set(ref(db, 'HawkinStats/' + d_array[0] + '/' + stats[i].timestamp), {
+        set(ref(db, 'HawkinStats/' + d_array[0] + '/' + stats[i].athleteId), {
             date : d_array[0],
             time : d_array[1],
             player_id : stats[i].athleteId,
@@ -286,6 +298,7 @@ async function setHawkins() {
             LRBrakeForce : stats[i].LRBrakeForce
         });
     }
+    console.log("Hawkins Load Complete")
 }
 
 //setHawkins();
@@ -459,4 +472,5 @@ export async function setFirstBeatSessions(){
         processFBsession(response, session_id);
         last_session_date = sessions[i].endTime;
         }
+        console.log('Firstbeat load complete')
    }

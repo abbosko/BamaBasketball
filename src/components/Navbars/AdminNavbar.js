@@ -163,9 +163,13 @@ function AdminNavbar(props) {
                   <NavLink tag="li">
                     <DropdownItem className="nav-item">Settings</DropdownItem>
                   </NavLink>
-                  <DropdownItem divider tag="li" />
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">Log out</DropdownItem>
+                  <NavLink
+                    //tag="li"
+                    id="logout"
+                    href="/admin/SignIn"
+                  >
+                    <DropdownItem className="nav-item">Log out
+                    </DropdownItem>
                   </NavLink>
                 </DropdownMenu>
               </UncontrolledDropdown>

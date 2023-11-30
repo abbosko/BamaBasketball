@@ -30,6 +30,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper.js";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper.js";
 import PlayerDashboard from "views/PlayerDashboard.js";
+import { call_set_apis } from "variables/apiFunctions.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
@@ -45,9 +46,13 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-export {db}
+
+//const authentication = auth();
+export {app};
+export {db};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+window.onload = call_set_apis()
 
 root.render(
   <ThemeContextWrapper>
@@ -57,10 +62,19 @@ root.render(
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route
             path="*"
-            element={<Navigate to="/admin/dashboard" replace />}
+            element={<Navigate to="/admin/SignIn" replace />}
           />
         </Routes>
       </BrowserRouter>
     </BackgroundColorWrapper>
   </ThemeContextWrapper>
 );
+
+// logout
+// const logout = document.querySelector('#logout');
+// logout.addEventLister('click', (e) => {
+//   e.preventDefault();
+//   authentication.signOut().then(() => {
+//     console.log('user signeo out');
+//   })
+// })

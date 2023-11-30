@@ -66,7 +66,7 @@ function Players() {
             <Card className="card-plain">
               <CardHeader>
                 <CardTitle tag="h1">Athletes</CardTitle>
-                <p className="category" style = {{fontSize: 20}}>Click name to view athlete's locker</p>
+                <p className="category" style = {{fontSize: 20}}>Click name to view player statistics</p>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>

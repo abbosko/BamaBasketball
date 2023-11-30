@@ -20,13 +20,13 @@ import { useEffect } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 
 import {useLocation} from "react-router-dom";
 
-import { getDatabase, ref, get} from "firebase/database";
+import { getDatabase, ref, get, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
-import {call_set_apis} from 'variables/apiFunctions.js'
+import {call_set_apis} from 'variables/apiFunctions.js';
 
 // reactstrap components
 import {
@@ -36,25 +36,31 @@ import {
   CardHeader,
   CardBody,
   CardTitle,
-  //DropdownToggle,
-  //DropdownMenu,
-  //DropdownItem,
-  //UncontrolledDropdown,
-  //Label,
-  //FormGroup,
-  //Input,
   Table,
   Row,
   Col,
-  //UncontrolledTooltip,
 } from "reactstrap";
 
 // core components
 import {
   firstbeatData,
-  chartExample2,
-  chartExample3,
-  chartExample4,
+  duration,
+  accumAccelLoad,
+  accumAccelLoadMin,
+  totalDistance,
+  maxSpeed,
+  maxJumpHeight,
+  jumpCount,
+  changesOfOrientation,
+  hawkJumpHeight,
+  mRSI,
+  timeToTakeoff,
+  brakingPhase,
+  peakRelativePropulsivePower,
+  brakingPower,
+  brakingNetImpulse,
+  propulsiveNetImpulse,
+  LRAvgBrakingForce,
 } from "variables/charts.js";
 
 const firebaseConfig = {
@@ -70,11 +76,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 
 // hawkin data
 async function getPlayerHawk(){
-  const db = getDatabase(app);
-  const hawkRef = ref(db, 'HawkinStats/2023-10-24');
+  const hawkRef = query(ref(db, 'HawkinStats/'), limitToLast(1));
   let snapshot = await get(hawkRef);
   
   if (snapshot.exists()) {
@@ -91,10 +98,36 @@ export async function getHawkWrap(){
 }
 const hawkList = await getHawkWrap();
 
+var hawkMatrix = [];
+async function getGraphHawk(){
+  const db = getDatabase(app);
+  const hawkRef = query(ref(db, 'HawkinStats/'), limitToLast(7));
+  let snapshot = await get(hawkRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getHawkGraphWrap(){
+  let data = await getGraphHawk();
+  {Object.values(data).map((val, key) => {
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.player_id, val2.jumpHeight, val2.mRSI, val2.timeTakeoff, val2.brakePhase, val2.prpp, val2.brakePwr, val2.brakeNetImp, val2.propNetImp, val2.LRBrakeForce);
+      hawkMatrix.push(arr);
+    })
+  })}
+}
+getHawkGraphWrap();
+
+
 // kinexon data
 async function getPlayerKinexon(){
   const db = getDatabase(app);
-  const kinRef = ref(db, 'KinexonStats/2023-10-27 14:34:15');
+  const kinRef = query(ref(db, 'KinexonStats/'), limitToLast(1));
   let snapshot = await get(kinRef);
   
   if (snapshot.exists()) {
@@ -111,10 +144,35 @@ export async function getKinexonWrap(){
 }
 const kinList = await getKinexonWrap();
 
+var kinexonMatrix = [];
+async function getGraphKinexon(){
+  const db = getDatabase(app);
+  const kinRef = query(ref(db, 'KinexonStats/'), limitToLast(7));
+  let snapshot = await get(kinRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getKinexonGraphWrap(){
+  let data = await getGraphKinexon();
+  {Object.values(data).map((val, key) => {
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.player_id, val2.accel_load_accum, val2.accel_load_accum_avg_per_minute, val2.event_count_change_of_orientation, val2.duration, val2.event_count_jump, val2.jump_height_max, val2.speed_max, val2.distance_total);
+      kinexonMatrix.push(arr);
+    })
+  })}
+}
+getKinexonGraphWrap();
+
 // firstbeat data
 async function getPlayerFB(){
   const db = getDatabase(app);
-  const fbRef = ref(db, 'FirstbeatStats/2023-11-01');
+  const fbRef = query(ref(db, 'FirstbeatStats/'), limitToLast(1));
   let snapshot = await get(fbRef);
   
   if (snapshot.exists()) {
@@ -141,20 +199,51 @@ function PlayerDashboard(props) {
   const stChart2Data = (name) => {
     setChart2Data(name);
   };*/
-  useEffect(() => {
-    call_set_apis();
-    setInterval(call_set_apis, 1000 * 60 * 60)
-    });
+
 
   const location = useLocation();
+
+  // get data list & return data struct for graph
+  function graphData(mtx, id, col) {
+    let data_arr = [];
+
+    // iterate through matrix & push back players' data on array
+    for(let i = 0; i < mtx.length; i++) {
+      if(mtx[i][0] == id) {
+        data_arr.push(mtx[i][col]);
+      }
+    }
+
+    return {
+      labels: [1, 2, 3, 4, 5, 6, 7],
+      datasets: [
+        {
+          label: "Status",
+          fill: true,
+          backgroundColor: "",
+          borderColor: "#1f8ef1",
+          borderWidth: 2,
+          borderDash: [],
+          borderDashOffset: 0.0,
+          pointBackgroundColor: "#1f8ef1",
+          pointBorderColor: "rgba(255,255,255,0)",
+          pointHoverBackgroundColor: "#1f8ef1",
+          pointBorderWidth: 20,
+          pointHoverRadius: 4,
+          pointHoverBorderWidth: 15,
+          pointRadius: 4,
+          data: data_arr,
+        },
+      ],
+    };
+  };
 
   return (
     <>
       <div className="content">
-        <h1>Athlete's Locker</h1>
+        <h1>Player Statistics</h1>
         <h2 style={{color: '#a9a9a9'}}>{location.state.fname} {location.state.lname}</h2>
         <Row>
-          
           <Col xs="4">
             <Card>
               <CardHeader>
@@ -169,49 +258,48 @@ function PlayerDashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.values(kinList).map((val, key) => {
-                      if(val.player_id == location.state.kinexon_id) {
-                        return (
-                          <>
-                            <tr>
-                              <td>Accumulated Acceleration Load</td>
-                              <td>{val.accel_load_accum}</td>
-                            </tr>
-                            <tr>
-                              <td>Accumulated Acceleration Load per Min</td>
-                              <td>{val.accel_load_accum_avg_per_minute}</td>
-                            </tr>
-                            <tr>
-                              <td>Changes of Orientation</td>
-                              <td>{val.event_count_change_of_orientation}</td>
-                            </tr>
-                            <tr>
-                              <td>Duration</td>
-                              <td>{val.duration}</td>
-                            </tr>
-                            <tr>
-                              <td>Jump Count</td>
-                              <td>{val.event_count_jump}</td>
-                            </tr>
-                            <tr>
-                              <td>Max Jump Height</td>
-                              <td>{val.jump_height_max} ft</td>
-                            </tr>
-                            <tr>
-                              <td>Max Speed</td>
-                              <td>{val.speed_max} mph</td>
-                            </tr>
-                            <tr>
-                              <td>Total Distance (Session)</td>
-                              <td>{val.distance_total} mi</td>
-                            </tr>
-                            <tr>
-                              <td>Total Distance (Week)</td>
-                              <td>**put on week table</td>
-                            </tr>
-                          </>
-                        )
-                      }
+                      {Object.values(kinList).map((val, key) => {
+                        let ans = Object.values(val).map((val2, key2) => {
+                          if(val2.player_id == location.state.kinexon_id) {
+                            return (
+                              <>
+                                <tr>
+                                  <td>Accumulated Acceleration Load</td>
+                                  <td>{val2.accel_load_accum}</td>
+                                </tr>
+                                <tr>
+                                  <td>Accumulated Acceleration Load per Min</td>
+                                  <td>{val2.accel_load_accum_avg_per_minute}</td>
+                                </tr>
+                                <tr>
+                                  <td>Changes of Orientation</td>
+                                  <td>{val2.event_count_change_of_orientation}</td>
+                                </tr>
+                                <tr>
+                                  <td>Duration</td>
+                                  <td>{val2.duration}</td>
+                                </tr>
+                                <tr>
+                                  <td>Jump Count</td>
+                                  <td>{val2.event_count_jump}</td>
+                                </tr>
+                                <tr>
+                                  <td>Max Jump Height</td>
+                                  <td>{val2.jump_height_max} ft</td>
+                                </tr>
+                                <tr>
+                                  <td>Max Speed</td>
+                                  <td>{val2.speed_max} mph</td>
+                                </tr>
+                                <tr>
+                                  <td>Total Distance (Session)</td>
+                                  <td>{val2.distance_total} mi</td>
+                                </tr>
+                              </>
+                            )
+                          }
+                        })
+                        return ans;
                     })}
                   </tbody>
                 </Table>
@@ -234,48 +322,51 @@ function PlayerDashboard(props) {
                   <tbody>
                     //getting the stuff from the list
                     {Object.values(hawkList).map((val, key) => {
-                      if(val.player_id == location.state.hawkins_id) {
-                        return (
-                          <>
-                            <tr>
-                              <td>LR Brake Force</td>
-                              <td>{val.LRBrakeForce} %</td>
-                            </tr>
-                            <tr>
-                              <td>Time to Takeoff</td>
-                              <td>{val.timeTakeoff} s</td>
-                            </tr>
-                            <tr>
-                              <td>Peak Relative Propulsive Power</td>
-                              <td>{val.prpp} W/kg</td>
-                            </tr>
-                            <tr>
-                              <td>Propulsive Net Impulse</td>
-                              <td>{val.propNetImp} N.s</td>
-                            </tr>
-                            <tr>
-                              <td>mRSI</td>
-                              <td>{val.mRSI}</td>
-                            </tr>
-                            <tr>
-                              <td>Jump Height</td>
-                              <td>{val.jumpHeight} m</td>
-                            </tr>
-                            <tr>
-                              <td>Brake Power</td>
-                              <td>{val.brakePwr} W</td>
-                            </tr>
-                            <tr>
-                              <td>Brake Phase</td>
-                              <td>{val.brakePhase} s</td>
-                            </tr>
-                            <tr>
-                              <td>Brake Net Impulse</td>
-                              <td>{val.brakeNetImp} N.s</td>
-                            </tr>
-                          </>
-                        )
-                      }
+                      let ans = Object.values(val).map((val2, key2) => {
+                        if(val2.player_id == location.state.hawkins_id) {
+                          return (
+                            <>
+                              <tr>
+                                <td>LR Brake Force</td>
+                                <td>{val2.LRBrakeForce} %</td>
+                              </tr>
+                              <tr>
+                                <td>Time to Takeoff</td>
+                                <td>{val2.timeTakeoff} s</td>
+                              </tr>
+                              <tr>
+                                <td>Peak Relative Propulsive Power</td>
+                                <td>{val2.prpp} W/kg</td>
+                              </tr>
+                              <tr>
+                                <td>Propulsive Net Impulse</td>
+                                <td>{val2.propNetImp} N.s</td>
+                              </tr>
+                              <tr>
+                                <td>mRSI</td>
+                                <td>{val2.mRSI}</td>
+                              </tr>
+                              <tr>
+                                <td>Jump Height</td>
+                                <td>{val2.jumpHeight} m</td>
+                              </tr>
+                              <tr>
+                                <td>Brake Power</td>
+                                <td>{val2.brakePwr} W</td>
+                              </tr>
+                              <tr>
+                                <td>Brake Phase</td>
+                                <td>{val2.brakePhase} s</td>
+                              </tr>
+                              <tr>
+                                <td>Brake Net Impulse</td>
+                                <td>{val2.brakeNetImp} N.s</td>
+                              </tr>
+                            </>
+                          )
+                        }
+                      })
+                      return ans;
                     })}
                   </tbody>
                 </Table>
@@ -297,24 +388,27 @@ function PlayerDashboard(props) {
                   </thead>
                   <tbody>
                     {Object.values(fbList).map((val, key) => {
-                      if(val.player_id == location.state.firstbeat_id) {
-                        return (
-                          <>
-                            <tr>
-                              <td>Trimp</td>
-                              <td>{val.trimp}</td>
-                            </tr>
-                            <tr>
-                              <td>Total Energy Consumption</td>
-                              <td>{val.energyConsumptionTotal} kcal</td>
-                            </tr>
-                            <tr>
-                              <td>Status Score</td>
-                              <td>{val.playerStatusScore}</td>
-                            </tr>
-                          </>
-                        )
-                      }
+                      let ans = Object.values(val).map((val2,key2) => {
+                        if(val2.player_id == location.state.firstbeat_id) {
+                          return (
+                            <>
+                              <tr>
+                                <td>Trimp</td>
+                                <td>{val2.trimp}</td>
+                              </tr>
+                              <tr>
+                                <td>Total Energy Consumption</td>
+                                <td>{val2.energyConsumptionTotal} kcal</td>
+                              </tr>
+                              <tr>
+                                <td>Status Score</td>
+                                <td>{val2.playerStatusScore}</td>
+                              </tr>
+                            </>
+                          )
+                        }
+                      })
+                      return ans;
                     })}
                   </tbody>
                 </Table>
@@ -414,8 +508,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 4)}
+                    options={duration.options}
                   />
                 </div>
               </CardBody>
@@ -433,8 +527,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample3.data}
-                    options={chartExample3.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id , 1)}
+                    options={accumAccelLoad.options}
                   />
                 </div>
               </CardBody>
@@ -451,8 +545,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample4.data}
-                    options={chartExample4.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 2)}
+                    options={accumAccelLoadMin.options}
                   />
                 </div>
               </CardBody>
@@ -471,8 +565,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 8)}
+                    options={totalDistance.options}
                   />
                 </div>
               </CardBody>
@@ -489,8 +583,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 7)}
+                    options={maxSpeed.options}
                   />
                 </div>
               </CardBody>
@@ -507,8 +601,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 6)}
+                    options={maxJumpHeight.options}
                   />
                 </div>
               </CardBody>
@@ -527,8 +621,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 5)}
+                    options={jumpCount.options}
                   />
                 </div>
               </CardBody>
@@ -545,8 +639,176 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 3)}
+                    options={changesOfOrientation.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Jump Height
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 1)}
+                    options={hawkJumpHeight.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> mRSI
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 2)}
+                    options={mRSI.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Time to Takeoff
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 3)}
+                    options={timeToTakeoff.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Phase
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 4)}
+                    options={brakingPhase.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Peak Relative Propulsive Power
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 5)}
+                    options={peakRelativePropulsivePower.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Power
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 6)}
+                    options={brakingPower.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Net Impusle
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 7)}
+                    options={brakingNetImpulse.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Propulsive Net Impulse
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 8)}
+                    options={propulsiveNetImpulse.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> L/R Avg. Braking Force
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 9)}
+                    options={LRAvgBrakingForce.options}
                   />
                 </div>
               </CardBody>
