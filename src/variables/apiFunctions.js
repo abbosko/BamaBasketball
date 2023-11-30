@@ -4,7 +4,7 @@ import { ref, set, get} from "firebase/database";
 import * as constants from '../constants.js';
 import {db} from '../index.js';
 import { genHawkinToken, genToken} from '../genToken.js';
-
+import { Buffer } from "buffer";
  
 // set up 
 //const token = genToken();
@@ -21,9 +21,9 @@ export async function addPlayer(){
 }
 
 export async function call_set_apis() {
-   setFirstBeatSessions();
-   setHawkins();
-    //setKinexonStats();
+   //setFirstBeatSessions();
+   //setHawkins();
+    setKinexonStats();
 }
 
 // get player functions, needed for adding new players
@@ -143,20 +143,25 @@ async function getKinexonSessions(){
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
 async function getapiKinexonStats(kinPlayerId, session_id) {
-    var data = 0
-    let response  = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
+    var data = 0;
+    var response;
+    try {
+     response  = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
         }}); 
-   
+    }
+    catch(err){
+        console.log(err)
+    }
     if (response.ok) { 
              data = await response.json();
         } 
     else { 
            response.json().then(data => {console.log(data)});
             console.log(data);
-            throw new Error('API request failed'); 
+            console.log('API request failed'); 
         } 
 
         return data;
@@ -184,8 +189,14 @@ async function setKinexonStats(){
     let sessions = await getKinexonSessions();
     for(let i=0; i< sessions.length; i++){
          for(let j=0; j< kinexon_players.length; j++){
-
-            let results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
+            var results;
+            try {
+             results = await getapiKinexonStats(kinexon_players[j], sessions[i].session_id, sessions[i].start_session);
+            }
+            catch(err) {
+                console.log(err);
+                await sleep(100000);
+            }
             if ( results.length == 0) {
                 console.log('No data for', kinexon_players[j] )
                 continue;
@@ -195,6 +206,7 @@ async function setKinexonStats(){
         }
      last_kinexon_session = sessions[i].start_session;
     }
+    console.log('Kinexon upload successful');
 }
 
 
