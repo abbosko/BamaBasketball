@@ -111,18 +111,19 @@ export async function getKinexonWrap(){
 }
 const kinList = await getKinexonWrap();
 
+var accAccAv = 0;
 // function to get average stats
-// async function getAverage(){
-//   var average = 0;
-//   var counter = 0;
-
-//   {Object.values(kinList).map((val, key) => { 
-//     average += val.accel_load_accum;
-//     counter ++;
-//   })}
-
-//   return average/counter;
-// }
+{Object.values(kinList).map((val, key) => {
+  let ans = Object.values(val).map((val2, key2) => {
+      var accAccVal = 0;
+      var accAccCount = 0;
+      accAccVal += val2.accel_load_accum;
+      accAccCount++;
+      accAccAv = accAccVal/accAccCount;
+      //return(
+       } )
+     return ans;
+    })}
 // firstbeat data
 async function getPlayerFB(){
   const db = getDatabase(app);
@@ -333,22 +334,14 @@ function Dashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                  {Object.values(kinList).map((val, key) => {
-                        let ans = Object.values(val).map((val2, key2) => {
-                          var accAccVal = 0;
-                          var accAccCount = 0;
-                          accAccVal += val2.accel_load_accum;
-                          accAccCount++;
-                          var accAccAv = accAccVal/accAccCount;
-                      return(
-                      <>
+
                         <tr>
                           <td>Date</td>
                           <td>--</td>
                         </tr>
                         <tr>
                           <td>Accumulated Acceleration Load</td>
-                          <td>{accAccCount}</td>
+                          <td>{accAccAv}</td>
                         </tr>
                         <tr>
                           <td>Accumulated Acceleration Load per Minute</td>
@@ -374,10 +367,6 @@ function Dashboard(props) {
                           <td>Jump Count</td>
                           <td>--</td>
                         </tr>
-                      </>
-                         ) } )
-                        return ans;
-                    })}
                   </tbody>
                 </Table>
               </CardBody>
