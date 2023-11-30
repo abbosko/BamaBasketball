@@ -220,7 +220,7 @@ function graphData(mtx, id, col, unit, c) {
         borderWidth: 2,
         borderDash: [],
         borderDashOffset: 0.0,
-        pointBackgroundColor: "#1f8ef1",
+        pointBackgroundColor: "#ffffff",
         pointBorderColor: "rgba(255,255,255,0)",
         pointHoverBackgroundColor: "#1f8ef1",
         pointBorderWidth: 20,
