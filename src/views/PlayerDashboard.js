@@ -320,7 +320,6 @@ function PlayerDashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    //getting the stuff from the list
                     {Object.values(hawkList).map((val, key) => {
                       let ans = Object.values(val).map((val2, key2) => {
                         if(val2.player_id == location.state.hawkins_id) {

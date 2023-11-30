@@ -338,7 +338,7 @@ function Dashboard(props) {
                           var accAccVal = 0;
                           var accAccCount = 0;
                           accAccVal += val2.accel_load_accum;
-                          accAccCount =+ 1;
+                          accAccCount++;
                           var accAccAv = accAccVal/accAccCount;
                       return(
                       <>
@@ -348,7 +348,7 @@ function Dashboard(props) {
                         </tr>
                         <tr>
                           <td>Accumulated Acceleration Load</td>
-                          <td>{accAccAv}</td>
+                          <td>{accAccCount}</td>
                         </tr>
                         <tr>
                           <td>Accumulated Acceleration Load per Minute</td>
