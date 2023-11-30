@@ -199,7 +199,7 @@ export async function getFBGraphWrap(){
 getFBGraphWrap();
 
 // get data list & return data struct for graph
-function graphData(mtx, id, col, unit) {
+function graphData(mtx, id, col, unit, c) {
   let data_arr = [];
 
   // iterate through matrix & push back players' data on array
@@ -216,7 +216,7 @@ function graphData(mtx, id, col, unit) {
         label: unit,
         fill: true,
         backgroundColor: "",
-        borderColor: "#1f8ef1",
+        borderColor: c,
         borderWidth: 2,
         borderDash: [],
         borderDashOffset: 0.0,
@@ -425,7 +425,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(fbMatrix, location.state.firstbeat_id, 3, "Trimp")}
+                    data={graphData(fbMatrix, location.state.firstbeat_id, 3, "Trimp", "#ff5ed1")}
                     options={chart_options}
                   />
                 </div>
@@ -443,7 +443,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(fbMatrix, location.state.firstbeat_id, 2, "Status")}
+                    data={graphData(fbMatrix, location.state.firstbeat_id, 2, "Status", "#ff5ed1")}
                     options={chart_options}
                   />
                 </div>
@@ -461,7 +461,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(fbMatrix, location.state.firstbeat_id, 1, "Calories")}
+                    data={graphData(fbMatrix, location.state.firstbeat_id, 1, "Calories", "#ff5ed1")}
                     options={chart_options}
                   />
                 </div>
@@ -481,7 +481,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 4, "Duration")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 4, "Duration", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -500,7 +500,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id , 1, "AAL")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id , 1, "AAL", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -518,7 +518,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 2, "AAL/min")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 2, "AAL/min", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -538,7 +538,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 8, "mi")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 8, "mi", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -556,7 +556,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 7, "mph")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 7, "mph", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -574,7 +574,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 6, "ft")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 6, "ft", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -594,7 +594,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 5, "Count")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 5, "Count", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -612,7 +612,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(kinexonMatrix, location.state.kinexon_id, 3, "Changes")}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 3, "Changes", "#66edff")}
                     options={chart2_options}
                   />
                 </div>
@@ -632,7 +632,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 1, "m")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 1, "m", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -650,7 +650,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 2, "mRSI")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 2, "mRSI", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -668,7 +668,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 3, "s")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 3, "s", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -688,7 +688,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 4, "s")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 4, "s", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -706,7 +706,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 5, "W/kg")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 5, "W/kg", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -724,7 +724,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 6, "W")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 6, "W", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -744,7 +744,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 7, "N.s")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 7, "N.s", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -762,7 +762,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 8, "N.s")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 8, "N.s", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
@@ -780,7 +780,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={graphData(hawkMatrix, location.state.hawkins_id, 9, "%")}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 9, "%", "#72f760")}
                     options={chart3_options}
                   />
                 </div>
