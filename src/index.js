@@ -45,7 +45,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-export {db}
+
+//const authentication = auth();
+export {app};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -57,10 +59,19 @@ root.render(
           <Route path="/admin/*" element={<AdminLayout />} />
           <Route
             path="*"
-            element={<Navigate to="/admin/dashboard" replace />}
+            element={<Navigate to="/admin/SignIn" replace />}
           />
         </Routes>
       </BrowserRouter>
     </BackgroundColorWrapper>
   </ThemeContextWrapper>
 );
+
+// logout
+// const logout = document.querySelector('#logout');
+// logout.addEventLister('click', (e) => {
+//   e.preventDefault();
+//   authentication.signOut().then(() => {
+//     console.log('user signeo out');
+//   })
+// })
