@@ -1,51 +1,74 @@
-import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
-import { initializeApp } from 'firebase/app';
+import { ref, set, get} from "firebase/database";
 
-import * as dotenv from 'dotenv';
-import {genToken, genHawkinToken} from './genToken.js';
-const firebaseConfig = {
-    apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
-    authDomain: "uambb-2def3.firebaseapp.com",
-    projectId: "uambb-2def3",
-    storageBucket: "uambb-2def3.appspot.com",
-    messagingSenderId: "210177408912",
-    appId: "1:210177408912:web:b608c7e17caa478eb27d15",
-    measurementId: "G-EYZBG3EE9B",
-    databaseURL: "https://uambb-2def3-default-rtdb.firebaseio.com/"
-  };
-  
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  
-const db = getDatabase();
 
-dotenv.config()
+import * as constants from '../constants.js';
+import {db} from '../index.js';
+import { genHawkinToken, genToken} from '../genToken.js';
 
+ 
+// set up 
 //const token = genToken();
 
 
+// const dbListener = ref(db, 'KinexonStats');
+// onValue(dbListener, (snapshot) => {
+//   const data = snapshot.val();
+//   PlayerDashboard(postElement, data);
+// });
+export async function addPlayer(){
+    // call apis to get IDS
+    // set in player table
+}
+
+export async function call_set_apis() {
+   setFirstBeatSessions();
+   setHawkins();
+    //setKinexonStats();
+}
+
+// get player functions, needed for adding new players
+
 // when adding new player, call api to get player id
-// async function getKinexonPlayers(){
-// }
+export async function getKinexonPlayers(){
+    let kinexonplayers = [];
+    kinexonplayers = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
+        },
+});
 
-// async function getHawkinsPlayers(){
-//         let hawkPlayer = [];
+    let kinexonResponse = await kinexonplayers.json();
+    for(let i = 0; i < kinexonResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto h
+        const m = kinexonResponse.data[i];
+
+    }
+    return kinexonplayers;
+}
+
+
+
+//firstbeat = apiFirstBeatAthletes
+// kinexon = 
+
+export async function getHawkinsPlayers(){
+        let hawkPlayer = [];
     
-//         let hawkinPlayers = await fetch((process.env.HAWKINS_URL).concat('/athletes'), {
-//             headers: {
-//                 Authorization: 'Bearer ' + await token.genHawkinToken()
-//             }
-//         });
+        let hawkinPlayers = await fetch(('https://corsproxy.io/?' + constants.HAWKINS_URL).concat('/athletes'), {
+            headers: {
+                Authorization: 'Bearer ' + await genHawkinToken()
+            }
+        });
     
-//         let hawkinResponse = await hawkinPlayers.json();
-//         for(let i = 0; i < hawkinResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto h
-//             const m = hawkinResponse.data[i];
+        let hawkinResponse = await hawkinPlayers.json();
+        for(let i = 0; i < hawkinResponse.data.length; i++) {     // loop through all measurments & hawkStruct w the data, push this onto h
+            const m = hawkinResponse.data[i];
 
-//         }
-//         return hawkPlayer;
-//     }
+        }
+        return hawkPlayer;
+    }
 
-/*const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
+const kinexon_players = [79,80,71,76,69,72,75,81,68,66,78,82];
 
 async function getPlayers(){
 const playerRef = ref(db, 'Players');
@@ -85,49 +108,46 @@ function FBAthlete(fname, lname, email, id) {
     this.id = id;
 }
 
-// loaded all data from jan 1 2023 - 10/22
+//loaded all data from jan 1 2023 - 10/22
 var min_session_date = '2023-06-01%2000%3A00%3A00';
 var today = '2023-10-31%2000%3A00%3A00';
 const fields = 'accel_load_accum,accel_load_accum_avg_per_minute,distance_total,speed_max,jump_height_max,event_count_jump,event_count_change_of_orientation';
-var last_kinexon_session = new Date().toISOString();
+var last_kinexon_session = '2023-10-31%2000%3A00%3A00';
 
 async function getKinexonSessions(){
-    //var today = new Date().toISOString();
-    //let datetime_array = last_kinexon_session.split('T');
-    //let min_session_date = datetime_array[0].toISOString();
-    //min_session_date = min_session_date + "T00:00:00Z";
+    // var today = new Date().toISOString();
+    // let datetime_array = last_kinexon_session.split('T');
+    // let min_session_date = datetime_array[0].toISOString();
+    // min_session_date = min_session_date + "T00:00:00Z";
+    var today = '2023-11-26%2000%3A00%3A00';
 
-   return await fetch((process.env.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', min_session_date, '&max=', today, '&apiKey=', process.env.KINEXON_API_KEY), {
-        headers: {
+   let response = await fetch(('https://corsproxy.io/?'+ constants.KINEXON_URL).concat('/teams/6/sessions-and-phases?min=', '2023-10-31%2000%3A00%3A00', '&max=', today, '&apiKey=', constants.KINEXON_API_KEY), {
+    headers: {
             'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
         },
     }) 
-    .then(response => { 
-        if (response.ok) { 
-            return response.json();
+    
+    if (response.ok) { 
+        let data = await response.json();
+         return data;
         } else { 
             console.log(response.json())
             throw new Error('API request failed'); 
         } 
-    }) 
-    .then(data => {   
-        console.log(data)
-        return data
-    }) 
-    .catch(error => { 
-        console.error(error);
-    });
+    
+
 }
+
 //getKinexonSessions();
 
 // have to get one player (and prob one session) at a time bc they dont label the data w any identifiers
 async function getapiKinexonStats(kinPlayerId, session_id) {
     var data = 0
-    let response  = await fetch((process.env.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', process.env.KINEXON_API_KEY), {
+    let response  = await fetch(('https://corsproxy.io/?' + constants.KINEXON_URL).concat('/statistics/players/', kinPlayerId, '/session/' + session_id+ '?fields=', fields, '&apiKey=', constants.KINEXON_API_KEY), {
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(process.env.KINEXON_API_USERNAME + ':' + process.env.KINEXON_API_PASSWORD).toString('base64')
+            'Authorization': 'Basic ' + Buffer.from(constants.KINEXON_API_USERNAME + ':' + constants.KINEXON_API_PASSWORD).toString('base64')
         }}); 
    
     if (response.ok) { 
@@ -176,7 +196,7 @@ async function setKinexonStats(){
      last_kinexon_session = sessions[i].start_session;
     }
 }
-setKinexonStats();*/
+
 
 
 
@@ -185,16 +205,16 @@ setKinexonStats();*/
 * Hawkins API calls! :)
 */
 
-/*const test = query(ref(db,'HawkinStats'), limitToLast(1));
-get(test).then((snapshot) => {
-  if (snapshot.exists()) {
-    console.log(snapshot.val());
-  } else {
-    console.log("No data available");
-  }
-}).catch((error) => {
-  console.error(error);
-});*/
+// const test = query(ref(db,'HawkinStats'), limitToLast(1));
+// get(test).then((snapshot) => {
+//   if (snapshot.exists()) {
+//     console.log(snapshot.val());
+//   } else {
+//     console.log("No data available");
+//   }
+// }).catch((error) => {
+//   console.error(error);
+// });
 
 function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePhase, prpp, brakePwr, brakeNetImp, propNetImp, LRBrakeForce) {
     this.timestamp = timestamp;
@@ -211,13 +231,13 @@ function hawkStruct(timestamp, athleteId, jumpHeight, mRSI, timeTakeoff, brakePh
 }
 
 // gets all data starting from June 1, 2023 @ midnight: 1685595600
-/*
+
 const apiHawkinsStats = async (datetime) => {
     let hawkStructArray = [];
 
-    let hawkinStats = await fetch((process.env.HAWKINS_URL).concat('?from=', datetime), {
+    let hawkinStats = await fetch(('https://corsproxy.io/?' + constants.HAWKINS_URL).concat('?from=', datetime), {
         headers: {
-            Authorization: 'Bearer ' + await token.genHawkinToken()
+            Authorization: 'Bearer ' + await genHawkinToken()
         }
     });
 
@@ -274,26 +294,17 @@ async function setHawkins() {
 /*
 * Firstbeat API calls! :)
 */
-/*
-let fbAuth = 'Bearer ' + genToken();                // generates authorization token
+
+let fbAuth = 'Bearer ' + await genToken();              // generates authorization token
 const teamId = 17688;                                       // UAMBB team id
 var fbAthleteArray = [];
 
-class FirstbeatPlayerSession{
-    constructor(trimp, engConsumption, playerStatusScore){
-        this.trimp = trimp;
-        this.engConsumption = engConsumption;
-        this.playerStatusScore = playerStatusScore;
-
-    }
-}
-
 // gets athlete info, creates instance of 'FBAthlete', stores in fbAthleteArray
 const apiFirstBeatAthletes = () => {
-    fetch((process.env.FIRSTBEAT_URL).concat('/athletes'), { // add {accountId}/athletes to url
+    fetch((constants.FIRSTBEAT_URL).concat('/athletes'), { // add {accountId}/athletes to url
         headers: {
             Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+            "X-Api-Key": constants.FIRSTBEAT_API_KEY
         }
     }) 
     .then(response => { 
@@ -320,33 +331,63 @@ async function  apiFirstBeatSessions(last_session_date) {
     let datetime_array = last_session_date.split('T');
     let session_date = datetime_array[0];
 
-   const response = await fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
+    // const headerDict = {
+    //         Authorization: fbAuth,
+    //         "X-Api-Key": constants.FIRSTBEAT_API_KEY,
+    // }
+    // const requestOptions = {
+    //     headers: new Headers(headerDict)
+    // };
+    // let promise =  new Promise((resolve, reject) => {
+    //     let url = constants.FIRSTBEAT_URL + '/teams/17688/sessions?fromTime=' + session_date + "T00:00:00Z";
+    //     http.get(url, requestOptions)
+    //     .toPromise();
+    // });
+    // let response = await promise.resolve();
+    // if (response.ok){
+    //     let data = response.json();
+    //     return data.sessions;
+
+    // }
+    // else {
+    //     console.log(response);
+    //     throw new Error('API request failed'); 
+    //     }
+ 
+            
+        
+  
+    // };
+
+
+   const response = await fetch(('https://corsproxy.io/?' + constants.FIRSTBEAT_URL + '/teams/17688/sessions?fromTime=' + session_date + "T00:00:00Z"), {  // add teams/{teamId}/sessions to url
         headers: {
             Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
-        }
+            "X-Api-Key": constants.FIRSTBEAT_API_KEY,
+        },
     });
         if (response.ok) { 
              data = await response.json()
          
         } else { 
+            console.log(response);
             throw new Error('API request failed'); 
         } 
         return  data.sessions;
+    };
 
-}
 
 // results for indiv session
 async function apiFirstBeatSessionResults(sessionID) {
     var data;
 
-    const token = genToken();
+    const token = await genToken();
     let fbAuth = 'Bearer ' + token; 
 
-   const response = await fetch((process.env.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/', sessionID, '/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
+   const response = await fetch(('https://corsproxy.io/?' + constants.FIRSTBEAT_URL).concat('/teams/', teamId, '/sessions/', sessionID, '/results'), {  // add teams/{teamId}/sessions/{sessionId}/results to url
         headers: {
             Authorization: fbAuth,
-            "X-Api-Key": process.env.FIRSTBEAT_API_KEY
+            "X-Api-Key": constants.FIRSTBEAT_API_KEY
         }
     });
 
@@ -368,14 +409,15 @@ function sleep(ms) {
 async function processFBsession(data, sessionID){
 
     data = await Promise.resolve(data); // i think this can be deleted idk
-    if (data.measurements == null){     // retry if getting {message: Accepted} -- mostly for historical data load, prob could delete
+    if (data.measurements == null || (typeof data.measurements == 'undefined')){     // retry if getting {message: Accepted} -- mostly for historical data load, prob could delete
         //return;
         console.log (data.measurements);
-        await sleep(10000);
+        await sleep(100000);
         data = await  apiFirstBeatSessionResults(sessionID)
     }
   
     for(let i = 0; i < data.measurements.length; i++) {
+        console.log(data.measurements)
         let session = new FirstbeatPlayerSession(0,0,0);
         session.athlete_id = data.measurements[i].athleteId;
         let datetime_array = data.measurements[i].startTime.split('T');
@@ -402,12 +444,13 @@ async function processFBsession(data, sessionID){
 }
     
 var last_session_date = new Date();     // Keeping Last session date in memory to reload from this time
-last_session_date.setDate(last_session_date.getDate() - 1);
+last_session_date.setFullYear(2023,10,27);
 last_session_date = last_session_date.toISOString()
 
 
 // this is the function to call to grab fb data from api and set in db
-async function setFirstBeatSessions(){
+export async function setFirstBeatSessions(){
+    console.log(last_session_date);
   let  sessions = await apiFirstBeatSessions(last_session_date);
  
    for(let i=0; i < sessions.length; i++){
@@ -417,7 +460,3 @@ async function setFirstBeatSessions(){
         last_session_date = sessions[i].endTime;
         }
    }
-
-
-setFirstBeatSessions();
-*/

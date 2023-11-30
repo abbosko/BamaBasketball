@@ -16,10 +16,12 @@
 
 */
 import React from "react";
+import { useEffect } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
+import {call_set_apis} from '../variables/apiFunctions.js'
 
 // reactstrap components
 import {
@@ -44,10 +46,10 @@ import {
 
 // core components
 import {
-  chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4,
+  dashboardFirstbeatData,
+  dashboardExample2,
+  dashboardExample3,
+  dashboardExample4,
 } from "variables/charts.js";
 
 function Dashboard(props) {
@@ -59,6 +61,13 @@ function Dashboard(props) {
   const stChart2Data = (name) => {
     setChart2Data(name);
   };*/
+
+  // calls apis on reload and on timer
+  useEffect(() => {
+    call_set_apis();
+    setInterval(call_set_apis, 1000 * 60 * 60)
+    });
+    
   return (
     <>
       <div className="content">
@@ -88,7 +97,7 @@ function Dashboard(props) {
                         onClick={() => setBgChartData("data1")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Monthly
+                          Trimp
                         </span>
                         <span className="d-block d-sm-none">
                           <i className="tim-icons icon-single-02" />
@@ -105,7 +114,7 @@ function Dashboard(props) {
                         onClick={() => setBgChartData("data2")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Weekly
+                          Training Stat
                         </span>
                         <span className="d-block d-sm-none">
                           <i className="tim-icons icon-gift-2" />
@@ -122,7 +131,7 @@ function Dashboard(props) {
                         onClick={() => setBgChartData("data3")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Daily
+                          Calories
                         </span>
                         <span className="d-block d-sm-none">
                           <i className="tim-icons icon-tap-02" />
@@ -135,8 +144,8 @@ function Dashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample1[bigChartData]}
-                    options={chartExample1.options}
+                    data={dashboardFirstbeatData[bigChartData]}
+                    options={dashboardFirstbeatData.options}
                   />
                 </div>
               </CardBody>
@@ -149,14 +158,14 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Time to Takeoff
+                  <i className="tim-icons icon-time-alarm text-success"  /> Time to Takeoff
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={dashboardExample2.data}
+                    options={dashboardExample2.options}
                   />
                 </div>
               </CardBody>
@@ -167,15 +176,15 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-delivery-fast text-primary" />{" "}
+                  <i className="tim-icons icon-sound-wave text-success"  />{" "}
                   mRSI
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample3.data}
-                    options={chartExample3.options}
+                    data={dashboardExample3.data}
+                    options={dashboardExample3.options}
                   />
                 </div>
               </CardBody>
@@ -186,14 +195,14 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-send text-success" /> Jump Height
+                  <i className="tim-icons icon-user-run text-success" /> Jump Height
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample4.data}
-                    options={chartExample4.options}
+                    data={dashboardExample4.data}
+                    options={dashboardExample4.options}
                   />
                 </div>
               </CardBody>
@@ -204,14 +213,14 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Hawkins Team Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Braking Phase
+                  <i className="tim-icons icon-trophy text-info" /> Braking Phase
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                   <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                    data={dashboardExample2.data}
+                    options={dashboardExample2.options}
                   />
                 </div>
               </CardBody>
@@ -219,28 +228,10 @@ function Dashboard(props) {
           </Col>
         </Row>
         <Row>
-          <Col lg="6" md="12">
-          <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Team Stats</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Brake Phase
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg="6" md="12">
+          <Col lg="12" md="9">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Team Stats</CardTitle>
+                <CardTitle tag="h4">Kinexon Team Stats</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
@@ -252,7 +243,7 @@ function Dashboard(props) {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Duration</td>
+                      <td>Date</td>
                       <td>--</td>
                     </tr>
                     <tr>
@@ -264,11 +255,11 @@ function Dashboard(props) {
                       <td>--</td>
                     </tr>
                     <tr>
-                      <td>Total Distance Session</td>
+                      <td>Total Distance</td>
                       <td>--</td>
                     </tr>
                     <tr>
-                      <td>Total Distance Session Week </td>
+                      <td>Changes of Orientation</td>
                       <td>-</td>
                     </tr>
                     <tr>
@@ -283,14 +274,7 @@ function Dashboard(props) {
                       <td>Jump Count</td>
                       <td>-</td>
                     </tr>
-                    <tr>
-                      <td>Changes of Orientation</td>
-                      <td>--</td>
-                    </tr>
-                    <tr>
-                      <td>Calories</td>
-                      <td>-</td>
-                    </tr>
+
                   </tbody>
                 </Table>
               </CardBody>
