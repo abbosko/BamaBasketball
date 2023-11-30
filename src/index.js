@@ -20,7 +20,9 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { getDatabase, ref, set, get, child, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import AdminLayout from "layouts/Admin/Admin.js";
+import { AuthContextProvider } from 'AuthContext.js';
 
 import "assets/scss/black-dashboard-react.scss";
 import "assets/demo/demo.css";
@@ -48,6 +50,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 //const authentication = auth();
+export const auth = getAuth(app);
 export {app};
 export {db};
 
@@ -58,23 +61,16 @@ root.render(
   <ThemeContextWrapper>
     <BackgroundColorWrapper>
       <BrowserRouter>
-        <Routes>
-          <Route path="/admin/*" element={<AdminLayout />} />
-          <Route
-            path="*"
-            element={<Navigate to="/admin/SignIn" replace />}
-          />
-        </Routes>
+      <AuthContextProvider>
+          <Routes>
+            <Route path='/admin/*' element={<AdminLayout />} />
+            <Route
+              path="*"
+              element={<Navigate to="/admin/SignIn" replace />}
+            />
+          </Routes>
+        </AuthContextProvider>
       </BrowserRouter>
     </BackgroundColorWrapper>
   </ThemeContextWrapper>
 );
-
-// logout
-// const logout = document.querySelector('#logout');
-// logout.addEventLister('click', (e) => {
-//   e.preventDefault();
-//   authentication.signOut().then(() => {
-//     console.log('user signeo out');
-//   })
-// })
