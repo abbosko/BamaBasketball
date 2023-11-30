@@ -20,7 +20,7 @@ import { useEffect } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 
 import {useLocation} from "react-router-dom";
 
@@ -36,17 +36,9 @@ import {
   CardHeader,
   CardBody,
   CardTitle,
-  //DropdownToggle,
-  //DropdownMenu,
-  //DropdownItem,
-  //UncontrolledDropdown,
-  //Label,
-  //FormGroup,
-  //Input,
   Table,
   Row,
   Col,
-  //UncontrolledTooltip,
 } from "reactstrap";
 
 // core components
@@ -84,8 +76,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const date = '2023-10-24';
-//const date = new Date().toJSON().slice(0, 10);
 const db = getDatabase(app);
 
 
@@ -108,6 +98,31 @@ export async function getHawkWrap(){
 }
 const hawkList = await getHawkWrap();
 
+var hawkMatrix = [];
+async function getGraphHawk(){
+  const db = getDatabase(app);
+  const hawkRef = query(ref(db, 'HawkinStats/'), limitToLast(7));
+  let snapshot = await get(hawkRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getHawkGraphWrap(){
+  let data = await getGraphHawk();
+  {Object.values(data).map((val, key) => {
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.player_id, val2.jumpHeight, val2.mRSI, val2.timeTakeoff, val2.brakePhase, val2.prpp, val2.brakePwr, val2.brakeNetImp, val2.propNetImp, val2.LRBrakeForce);
+      hawkMatrix.push(arr);
+    })
+  })}
+}
+getHawkGraphWrap();
+
 
 // kinexon data
 async function getPlayerKinexon(){
@@ -128,6 +143,31 @@ export async function getKinexonWrap(){
   return data;
 }
 const kinList = await getKinexonWrap();
+
+var kinexonMatrix = [];
+async function getGraphKinexon(){
+  const db = getDatabase(app);
+  const kinRef = query(ref(db, 'KinexonStats/'), limitToLast(7));
+  let snapshot = await get(kinRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getKinexonGraphWrap(){
+  let data = await getGraphKinexon();
+  {Object.values(data).map((val, key) => {
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.player_id, val2.accel_load_accum, val2.accel_load_accum_avg_per_minute, val2.event_count_change_of_orientation, val2.duration, val2.event_count_jump, val2.jump_height_max, val2.speed_max, val2.distance_total);
+      kinexonMatrix.push(arr);
+    })
+  })}
+}
+getKinexonGraphWrap();
 
 // firstbeat data
 async function getPlayerFB(){
@@ -162,6 +202,41 @@ function PlayerDashboard(props) {
 
 
   const location = useLocation();
+
+  // get data list & return data struct for graph
+  function graphData(mtx, id, col) {
+    let data_arr = [];
+
+    // iterate through matrix & push back players' data on array
+    for(let i = 0; i < mtx.length; i++) {
+      if(mtx[i][0] == id) {
+        data_arr.push(mtx[i][col]);
+      }
+    }
+
+    return {
+      labels: [1, 2, 3, 4, 5, 6, 7],
+      datasets: [
+        {
+          label: "Status",
+          fill: true,
+          backgroundColor: "",
+          borderColor: "#1f8ef1",
+          borderWidth: 2,
+          borderDash: [],
+          borderDashOffset: 0.0,
+          pointBackgroundColor: "#1f8ef1",
+          pointBorderColor: "rgba(255,255,255,0)",
+          pointHoverBackgroundColor: "#1f8ef1",
+          pointBorderWidth: 20,
+          pointHoverRadius: 4,
+          pointHoverBorderWidth: 15,
+          pointRadius: 4,
+          data: data_arr,
+        },
+      ],
+    };
+  };
 
   return (
     <>
@@ -245,6 +320,7 @@ function PlayerDashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
+                    //getting the stuff from the list
                     {Object.values(hawkList).map((val, key) => {
                       let ans = Object.values(val).map((val2, key2) => {
                         if(val2.player_id == location.state.hawkins_id) {
@@ -432,7 +508,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={duration.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 4)}
                     options={duration.options}
                   />
                 </div>
@@ -451,7 +527,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={accumAccelLoad.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id , 1)}
                     options={accumAccelLoad.options}
                   />
                 </div>
@@ -469,7 +545,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={accumAccelLoadMin.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 2)}
                     options={accumAccelLoadMin.options}
                   />
                 </div>
@@ -489,7 +565,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={totalDistance.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 8)}
                     options={totalDistance.options}
                   />
                 </div>
@@ -507,7 +583,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={maxSpeed.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 7)}
                     options={maxSpeed.options}
                   />
                 </div>
@@ -525,7 +601,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={maxJumpHeight.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 6)}
                     options={maxJumpHeight.options}
                   />
                 </div>
@@ -545,7 +621,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={jumpCount.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 5)}
                     options={jumpCount.options}
                   />
                 </div>
@@ -563,7 +639,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={changesOfOrientation.data}
+                    data={graphData(kinexonMatrix, location.state.kinexon_id, 3)}
                     options={changesOfOrientation.options}
                   />
                 </div>
@@ -583,7 +659,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={hawkJumpHeight.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 1)}
                     options={hawkJumpHeight.options}
                   />
                 </div>
@@ -601,7 +677,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={mRSI.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 2)}
                     options={mRSI.options}
                   />
                 </div>
@@ -619,7 +695,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={timeToTakeoff.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 3)}
                     options={timeToTakeoff.options}
                   />
                 </div>
@@ -639,7 +715,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={brakingPhase.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 4)}
                     options={brakingPhase.options}
                   />
                 </div>
@@ -657,7 +733,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={peakRelativePropulsivePower.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 5)}
                     options={peakRelativePropulsivePower.options}
                   />
                 </div>
@@ -675,7 +751,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={brakingPower.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 6)}
                     options={brakingPower.options}
                   />
                 </div>
@@ -695,7 +771,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={brakingNetImpulse.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 7)}
                     options={brakingNetImpulse.options}
                   />
                 </div>
@@ -713,7 +789,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={propulsiveNetImpulse.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 8)}
                     options={propulsiveNetImpulse.options}
                   />
                 </div>
@@ -731,7 +807,7 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={LRAvgBrakingForce.data}
+                    data={graphData(hawkMatrix, location.state.hawkins_id, 9)}
                     options={LRAvgBrakingForce.options}
                   />
                 </div>
