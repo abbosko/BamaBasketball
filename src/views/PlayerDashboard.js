@@ -51,7 +51,7 @@ import {
 
 // core components
 import {
-  chartExample1,
+  firstbeatData,
   chartExample2,
   chartExample3,
   chartExample4,
@@ -393,8 +393,8 @@ function PlayerDashboard(props) {
               <CardBody>
                 <div className="chart-area">
                   <Bar
-                    data={chartExample1[bigChartData]}
-                    options={chartExample1.options}
+                    data={firstbeatData[bigChartData]}
+                    options={firstbeatData.options}
                   />
                 </div>
               </CardBody>
@@ -405,9 +405,9 @@ function PlayerDashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Player Stats</h5>
+                <h5 className="card-category">Kinexon Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Training Status
+                  <i className="tim-icons icon-bell-55 text-info" /> Duration
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -423,10 +423,10 @@ function PlayerDashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Player Stats</h5>
+                <h5 className="card-category">Kinexon Stats</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-delivery-fast text-primary" />{" "}
-                  mRSI
+                  Accumulated Acceleration Load
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -442,9 +442,9 @@ function PlayerDashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Player Stats</h5>
+                <h5 className="card-category">Kinexon Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-send text-success" /> Jump Height
+                  <i className="tim-icons icon-send text-success" /> Accumulated Accelerated Load/min
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -459,11 +459,12 @@ function PlayerDashboard(props) {
           </Col>
         </Row>
         <Row>
-          <Card className="card-chart">
+          <Col lg="4">
+            <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Player Stats</h5>
+                <h5 className="card-category">Kinexon Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Brake Phase
+                  <i className="tim-icons icon-bell-55 text-info" /> Total Distance
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -475,6 +476,81 @@ function PlayerDashboard(props) {
                 </div>
               </CardBody>
             </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Max Speed
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={chartExample2.data}
+                    options={chartExample2.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Max Jump Height
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={chartExample2.data}
+                    options={chartExample2.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="6">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Jump Count
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={chartExample2.data}
+                    options={chartExample2.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="6">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Changes of Orientation
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={chartExample2.data}
+                    options={chartExample2.options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
         </Row>
       </div>
     </>
