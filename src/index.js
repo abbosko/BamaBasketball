@@ -48,6 +48,7 @@ const db = getDatabase(app);
 
 //const authentication = auth();
 export {app};
+export {db};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
