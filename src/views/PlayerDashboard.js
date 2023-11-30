@@ -141,10 +141,10 @@ function PlayerDashboard(props) {
   const stChart2Data = (name) => {
     setChart2Data(name);
   };*/
-  useEffect(() => {
-    call_set_apis();
-    setInterval(call_set_apis, 1000 * 60 * 60)
-    });
+  // useEffect(() => {
+  //   call_set_apis();
+  //   setInterval(call_set_apis, 1000 * 60 * 60)
+  //   }, []);
 
   const location = useLocation();
 

@@ -50,7 +50,8 @@ export async function genToken() {                    // FIRSTBEAT TOKEN
 export async function genHawkinToken() {          // HAWKIN TOKEN
         let hawkinTokenData = await fetch(('https://corsproxy.io/?' + 'https://cloud.hawkindynamics.com/api/token'), {
             headers: {
-                Authorization: 'Bearer ' + HAWKINS_REFRESH_TOKEN
+                Authorization: 'Bearer ' + HAWKINS_REFRESH_TOKEN,
+                'Access-Control-Allow-Origin': '*'
             }
         })
         

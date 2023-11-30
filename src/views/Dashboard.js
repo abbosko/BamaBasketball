@@ -63,10 +63,10 @@ function Dashboard(props) {
   };*/
 
   // calls apis on reload and on timer
-  useEffect(() => {
-    call_set_apis();
-    setInterval(call_set_apis, 1000 * 60 * 60)
-    });
+  // useEffect(() => {
+  //   call_set_apis();
+  //   setInterval(call_set_apis, 1000 * 60 * 60)
+  //   }, []);
     
   return (
     <>
