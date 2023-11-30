@@ -52,7 +52,7 @@ export {app};
 export {db};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-window.onload = call_set_apis()
+window.onload = call_set_apis(db)
 
 root.render(
   <ThemeContextWrapper>
