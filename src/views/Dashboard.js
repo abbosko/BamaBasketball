@@ -20,13 +20,11 @@ import { useEffect } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
-import {call_set_apis} from '../variables/apiFunctions.js'
+import { Bar } from "react-chartjs-2";
 
-import { getDatabase, ref, get} from "firebase/database";
+import { getDatabase, ref, get, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
-//import {call_set_apis} from 'variables/apiFunctions.js'
-
+import {call_set_apis} from 'variables/apiFunctions.js';
 
 // reactstrap components
 import {
@@ -36,26 +34,16 @@ import {
   CardHeader,
   CardBody,
   CardTitle,
-  //DropdownToggle,
-  //DropdownMenu,
-  //DropdownItem,
-  //UncontrolledDropdown,
-  //Label,
-  //FormGroup,
-  //Input,
   Table,
   Row,
   Col,
-  //UncontrolledTooltip,
 } from "reactstrap";
 
-// core components
 import {
-  dashboardFirstbeatData,
-  dashboardExample2,
-  dashboardExample3,
-  dashboardExample4,
-} from "variables/charts.js";
+  chart_options,
+  chart2_options,
+  chart3_options,
+} from "../variables/charts.js"
 
 const firebaseConfig = {
   apiKey: "AIzaSyC40QoEGRFW3odhHDrk5tYTsO0X4mFyJXQ",
@@ -70,11 +58,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 
 // hawkin data
 async function getPlayerHawk(){
-  const db = getDatabase(app);
-  const hawkRef = ref(db, 'HawkinStats/2023-10-24');
+  const hawkRef = query(ref(db, 'HawkinStats/'), limitToLast(1));
   let snapshot = await get(hawkRef);
   
   if (snapshot.exists()) {
@@ -91,10 +80,36 @@ export async function getHawkWrap(){
 }
 const hawkList = await getHawkWrap();
 
+var hawkMatrix = [];
+async function getGraphHawk(){
+  const hawkRef = query(ref(db, 'HawkinStats/'), limitToLast(7));
+  let snapshot = await get(hawkRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getHawkGraphWrap(){
+  let data = await getGraphHawk();
+  {Object.values(data).map((val, key) => {
+    let tempMtx = [];
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.jumpHeight, val2.mRSI, val2.timeTakeoff, val2.brakePhase, val2.prpp, val2.brakePwr, val2.brakeNetImp, val2.propNetImp, val2.LRBrakeForce);
+      tempMtx.push(arr);
+    })
+    hawkMatrix.push(tempMtx);
+  })}
+}
+getHawkGraphWrap();
+
+
 // kinexon data
 async function getPlayerKinexon(){
-  const db = getDatabase(app);
-  const kinRef = ref(db, 'KinexonStats/2023-10-27 14:34:15');
+  const kinRef = query(ref(db, 'KinexonStats/'), limitToLast(1));
   let snapshot = await get(kinRef);
   
   if (snapshot.exists()) {
@@ -111,23 +126,35 @@ export async function getKinexonWrap(){
 }
 const kinList = await getKinexonWrap();
 
-var accAccAv = 0;
-// function to get average stats
-{Object.values(kinList).map((val, key) => {
-  let ans = Object.values(val).map((val2, key2) => {
-      var accAccVal = 0;
-      var accAccCount = 0;
-      accAccVal += val2.accel_load_accum;
-      accAccCount++;
-      accAccAv = accAccVal/accAccCount;
-      //return(
-       } )
-     return ans;
-    })}
+var kinexonMatrix = [];
+async function getGraphKinexon(){
+  const kinRef = query(ref(db, 'KinexonStats/'), limitToLast(7));
+  let snapshot = await get(kinRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getKinexonGraphWrap(){
+  let data = await getGraphKinexon();
+  {Object.values(data).map((val, key) => {
+    let tempMtx = [];
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.accel_load_accum, val2.accel_load_accum_avg_per_minute, val2.event_count_change_of_orientation, val2.duration, val2.event_count_jump, val2.jump_height_max, val2.speed_max, val2.distance_total);
+      tempMtx.push(arr);
+    })
+    kinexonMatrix.push(tempMtx);
+  })}
+}
+getKinexonGraphWrap();
+
 // firstbeat data
 async function getPlayerFB(){
-  const db = getDatabase(app);
-  const fbRef = ref(db, 'FirstbeatStats/2023-11-01');
+  const fbRef = query(ref(db, 'FirstbeatStats/'), limitToLast(1));
   let snapshot = await get(fbRef);
   
   if (snapshot.exists()) {
@@ -144,186 +171,88 @@ export async function getFBWrap(){
 }
 const fbList = await getFBWrap();
 
-function Dashboard(props) {
-  const [bigChartData, setbigChartData] = React.useState("data1");
-  const setBgChartData = (name) => {
-    setbigChartData(name);
-  };
-  /*const [chart2Data, setChart2Data] = React.useState("data1");
-  const stChart2Data = (name) => {
-    setChart2Data(name);
-  };*/
+var fbMatrix = [];
+async function getGraphFB(){
+  const fbRef = query(ref(db, 'FirstbeatStats/'), limitToLast(7));
+  let snapshot = await get(fbRef);
+  
+  if (snapshot.exists()) {
+    let snap  = await snapshot.val();
+    return snap;
+  } else {
+    console.log("No data available");
+  }      
+}
+  
+export async function getFBGraphWrap(){
+  let data = await getGraphFB();
+  {Object.values(data).map((val, key) => {
+    let tempMtx = [];
+    Object.values(val).map((val2, key2) => {
+      let arr = new Array(val2.energyConsumptionTotal, val2.playerStatusScore, val2.trimp);
+      tempMtx.push(arr);
+    })
+    fbMatrix.push(tempMtx);
+  })}
+}
+getFBGraphWrap();
 
-  // calls apis on reload and on timer
-  // useEffect(() => {
-  //   call_set_apis();
-  //   setInterval(call_set_apis, 1000 * 60 * 60)
-  //   }, []);
-    
+/*
+* Calculates Averages for a Column in a Matrix
+*/
+function calcAvg(mtx, col) {
+  let sum = 0;
+  for(let i = 0; i < mtx.length; i++) {
+    sum += mtx[i][col];
+  }
+
+  return sum / mtx.length;
+}
+
+
+// Calculates Values for Graphs & Returns Data Context
+function graphData(mtx, col, unit, c) {
+  let data_arr = [];
+
+  // iterate through matrix & push back avgs of each day of given col (metric) onto array
+  for(let i = 0; i < mtx.length; i++) {
+    data_arr.push(calcAvg(mtx[i], col));
+  }
+
+  return {
+    labels: [1, 2, 3, 4, 5, 6, 7],
+    datasets: [
+      {
+        label: unit,
+        fill: true,
+        backgroundColor: "",
+        borderColor: c,
+        borderWidth: 2,
+        borderDash: [],
+        borderDashOffset: 0.0,
+        pointBackgroundColor: "#ffffff",
+        pointBorderColor: "rgba(255,255,255,0)",
+        pointHoverBackgroundColor: "#1f8ef1",
+        pointBorderWidth: 20,
+        pointHoverRadius: 4,
+        pointHoverBorderWidth: 15,
+        pointRadius: 4,
+        data: data_arr,
+      },
+    ],
+  };
+};
+
+function Dashboard(props) {
   return (
     <>
       <div className="content">
-        <h1>Team Locker Room</h1>
+        <h1>Team Statistics</h1>
         <Row>
-          <Col xs="12">
-            <Card className="card-chart">
-              <CardHeader>
-                <Row>
-                  <Col className="text-left" sm="6">
-                    <h5 className="card-category">Firstbeat Team Stats</h5>
-                    <CardTitle tag="h2">Heart Rate Data</CardTitle>
-                  </Col>
-                  <Col sm="6">
-                    <ButtonGroup
-                      className="btn-group-toggle float-right"
-                      data-toggle="buttons"
-                    >
-                      <Button
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data1",
-                        })}
-                        color="info"
-                        id="0"
-                        size="sm"
-                        onClick={() => setBgChartData("data1")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Trimp
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-single-02" />
-                        </span>
-                      </Button>
-                      <Button
-                        color="info"
-                        id="1"
-                        size="sm"
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data2",
-                        })}
-                        onClick={() => setBgChartData("data2")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Training Stat
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-gift-2" />
-                        </span>
-                      </Button>
-                      <Button
-                        color="info"
-                        id="2"
-                        size="sm"
-                        tag="label"
-                        className={classNames("btn-simple", {
-                          active: bigChartData === "data3",
-                        })}
-                        onClick={() => setBgChartData("data3")}
-                      >
-                        <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                          Calories
-                        </span>
-                        <span className="d-block d-sm-none">
-                          <i className="tim-icons icon-tap-02" />
-                        </span>
-                      </Button>
-                    </ButtonGroup>
-                  </Col>
-                </Row>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={dashboardFirstbeatData[bigChartData]}
-                    options={dashboardFirstbeatData.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg="3">
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Hawkins Team Stats</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-time-alarm text-success"  /> Time to Takeoff
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={dashboardExample2.data}
-                    options={dashboardExample2.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg="3">
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Hawkins Team Stats</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-sound-wave text-success"  />{" "}
-                  mRSI
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Bar
-                    data={dashboardExample3.data}
-                    options={dashboardExample3.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg="3">
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Hawkins Team Stats</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-user-run text-success" /> Jump Height
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={dashboardExample4.data}
-                    options={dashboardExample4.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg="3">
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Hawkins Team Stats</h5>
-                <CardTitle tag="h3">
-                  <i className="tim-icons icon-trophy text-info" /> Braking Phase
-                </CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Line
-                    data={dashboardExample2.data}
-                    options={dashboardExample2.options}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg="12" md="9">
+          <Col xs="4">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Kinexon Team Stats</CardTitle>
+                <CardTitle tag="h4">Kinexon Stats</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table className="tablesorter" responsive>
@@ -334,41 +263,452 @@ function Dashboard(props) {
                     </tr>
                   </thead>
                   <tbody>
-
-                        <tr>
-                          <td>Date</td>
-                          <td>--</td>
-                        </tr>
-                        <tr>
-                          <td>Accumulated Acceleration Load</td>
-                          <td>{accAccAv}</td>
-                        </tr>
-                        <tr>
-                          <td>Accumulated Acceleration Load per Minute</td>
-                          <td>--</td>
-                        </tr>
-                        <tr>
-                          <td>Total Distance</td>
-                          <td>--</td>
-                        </tr>
-                        <tr>
-                          <td>Changes of Orientation</td>
-                          <td>--</td>
-                        </tr>
-                        <tr>
-                          <td>Max Speed</td>
-                          <td>-- mph</td>
-                        </tr>
-                        <tr>
-                          <td>Max Jump Height</td>
-                          <td>-- ft</td>
-                        </tr>
-                        <tr>
-                          <td>Jump Count</td>
-                          <td>--</td>
-                        </tr>
+                    {Object.values(kinList).map((val, key) => {
+                      let kinVals = [];
+                      Object.values(val).map((val2, key2) => {
+                        if (val2.accel_load_accum != null) kinVals.push(new Array(val2.accel_load_accum, val2.accel_load_accum_avg_per_minute, val2.event_count_change_of_orientation, val2.event_count_jump, val2.jump_height_max, val2.speed_max, val2.distance_total));
+                      })
+                      return (
+                        <>
+                          <tr><td>Accumulated Acceleration Load</td><td>{calcAvg(kinVals, 0)}</td></tr>
+                          <tr><td>Accumulated Acceleration Load/min</td><td>{calcAvg(kinVals, 1)}</td></tr>
+                          <tr><td>Changes of Orientation</td><td>{calcAvg(kinVals, 2)}</td></tr>
+                          <tr><td>Jump Count</td><td>{calcAvg(kinVals, 3)}</td></tr>
+                          <tr><td>Max Jump Height</td><td>{calcAvg(kinVals, 4)} ft</td></tr>
+                          <tr><td>Max Speed</td><td>{calcAvg(kinVals, 5)} mph</td></tr>
+                          <tr><td>Total Distance</td><td>{calcAvg(kinVals, 6)} mi</td></tr>
+                        </>
+                      );
+                      })}
                   </tbody>
                 </Table>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xs="4">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">Hawkin Stats</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table className="tablesorter" responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Stat</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(hawkList).map((val, key) => {
+                      let hawkVals = [];
+                      Object.values(val).map((val2, key2) => {
+                        if (val2.jumpHeight != null) hawkVals.push(new Array(val2.jumpHeight, val2.mRSI, val2.timeTakeoff, val2.brakePhase, val2.prpp, val2.brakePwr, val2.brakeNetImp, val2.propNetImp, val2.LRBrakeForce));
+                      })
+                      return (
+                        <>
+                          <tr><td>Brake Net Impulse</td><td>{calcAvg(hawkVals, 6)} N.s</td></tr>
+                          <tr><td>Brake Phase</td><td>{calcAvg(hawkVals, 3)} s</td></tr>
+                          <tr><td>Brake Power</td><td>{calcAvg(hawkVals, 5)} W</td></tr>
+                          <tr><td>Jump Height</td><td>{calcAvg(hawkVals, 0)} m</td></tr>
+                          <tr><td>mRSI</td><td>{calcAvg(hawkVals, 1)}</td></tr>
+                          <tr><td>L/R Average Brake Force</td><td>{calcAvg(hawkVals, 8)} %</td></tr>
+                          <tr><td>Peak Relative Propulsive Power</td><td>{calcAvg(hawkVals, 4)} W/kg</td></tr>
+                          <tr><td>Propulsive Net Impulse</td><td>{calcAvg(hawkVals, 7)} N.s</td></tr>
+                          <tr><td>Time to Takeoff</td><td>{calcAvg(hawkVals, 2)} s</td></tr> 
+                        </>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xs="4">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">FirstBeat Stats</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table className="tablesorter" responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Stat</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(fbList).map((val, key) => {
+                      let fbVals = [];
+                      Object.values(val).map((val2, key2) => {
+                        if (val2.trimp != null) fbVals.push(new Array(val2.energyConsumptionTotal, val2.playerStatusScore, val2.trimp));
+                      })
+                      return (
+                        <>
+                          <tr><td>Total Energy Consumption</td><td>{calcAvg(fbVals, 0)} kcal</td></tr>
+                          <tr><td>Trimp</td><td>{calcAvg(fbVals, 2)}</td></tr>
+                          <tr><td>Status Score</td><td>{calcAvg(fbVals, 1)}</td></tr> 
+                        </>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>          
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Firstbeat Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Trimp
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(fbMatrix, 2, "Trimp", "#ff5ed1")}
+                    options={chart_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Firstbeat Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Training Status Score
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(fbMatrix, 1, "Status", "#ff5ed1")}
+                    options={chart_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Firstbeat Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Total Energy Consumption
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(fbMatrix, 0, "Calories", "#ff5ed1")}
+                    options={chart_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="6">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" />{" "}
+                  Accumulated Acceleration Load
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(kinexonMatrix, 0, "AAL", "#66edff")}
+                    options={chart2_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="6">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Accumulated Accelerated Load/min
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(kinexonMatrix, 1, "AAL/min", "#66edff")}
+                    options={chart2_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Total Distance
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(kinexonMatrix, 7, "mi", "#66edff")}
+                    options={chart2_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Max Speed
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(kinexonMatrix, 6, "mph", "#66edff")}
+                    options={chart2_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Max Jump Height
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(kinexonMatrix, 5, "ft", "#66edff")}
+                    options={chart2_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="6">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Jump Count
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(kinexonMatrix, 4, "Count", "#66edff")}
+                    options={chart2_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="6">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Kinexon Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Changes of Orientation
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(kinexonMatrix, 2, "Changes", "#66edff")}
+                    options={chart2_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Jump Height
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 0, "m", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> mRSI
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 1, "mRSI", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Time to Takeoff
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 2, "s", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Phase
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 3, "s", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Peak Relative Propulsive Power
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 4, "W/kg", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Power
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 5, "W", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Net Impusle
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 6, "N.s", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Propulsive Net Impulse
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 7, "N.s", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Hawkin Stats</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> L/R Avg. Braking Force
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={graphData(hawkMatrix, 8, "%", "#72f760")}
+                    options={chart3_options}
+                  />
+                </div>
               </CardBody>
             </Card>
           </Col>
