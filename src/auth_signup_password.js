@@ -7,8 +7,6 @@
 // [START auth_signup_password_modular]
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
-var email = "alyssagabrielson1@gmail.com";
-var password = "test123";
 const auth = getAuth();
 createUserWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {

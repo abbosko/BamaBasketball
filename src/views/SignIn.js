@@ -21,6 +21,10 @@ import { useEffect } from "react";
 import {call_set_apis} from 'variables/apiFunctions.js'
 import { UserAuth } from 'AuthContext.js'
 
+// Icons for the view/hide password button
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 // reactstrap components
 import {
   Button,
@@ -40,17 +44,21 @@ function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { user } = UserAuth();
-  const { signIn } = UserAuth();
+  const { user, signIn } = UserAuth();
+  var flag = false;
 
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('')
     try {
       await signIn(email, password)
-      navigate('/account')
+      navigate('/admin/dashboard')
     } catch (e) {
       setError(e.message)
       console.log(e.message)
@@ -66,34 +74,52 @@ function SignIn() {
               <CardHeader>
                 <h5 className="title">Please sign in to access the dashboard.</h5>
               </CardHeader>
+              <Form 
+                  onSubmit={handleSubmit}>
               <CardBody>
-                <Form>
                   <Row>
                     <Col className="pr-md-1" md="5">
                     <FormGroup>
                         <label htmlFor="exampleInputEmail1">
-                          <p>Email address: {user && user.email}</p>
+                          <p>Email address:</p>
                         </label>
-                        <Input placeholder="mike@email.com" type="email" />
+                        <Input placeholder="mike@email.com" 
+                        type="email" 
+                        onChange={(e) => setEmail(e.target.value)} />
                       </FormGroup>
                     </Col>
                     <Col className="pl-md-1" md="4">
                         <FormGroup>
-                            <label>Password</label>
+                            <label>Password:  </label>
                             <Input
                             placeholder="Password"
-                            type="text"
+                            onChange={(e) => setPassword(e.target.value)}
+                            type={showPassword ? 'text' : 'password'}
                             />
+                            <span>
+                              <button
+                                className="password-toggle-btn"
+                                onClick={handleTogglePassword}
+                                type="button"
+                                >
+                                <FontAwesomeIcon
+                                  icon={showPassword ? faEyeSlash : faEye}
+                                  className="password-toggle-icon"
+                                />
+                              </button>
+                            </span>
                         </FormGroup>
                     </Col>
                   </Row>
-                </Form>
+
               </CardBody>
               <CardFooter>
+              {error && <h5 className="title">Incorrect username or password.</h5>}
                 <Button className="btn-fill" color="primary" type="submit">
                   Sign In
                 </Button>
               </CardFooter>
+              </Form>
             </Card>
           </Col>
           <Col md="4">

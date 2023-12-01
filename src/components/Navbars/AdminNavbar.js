@@ -47,6 +47,7 @@ function AdminNavbar(props) {
   const [color, setcolor] = React.useState("navbar-transparent");
 
   const { logout } = UserAuth();
+  const { user } = UserAuth();
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -173,7 +174,7 @@ function AdminNavbar(props) {
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item">Profile</DropdownItem>
+                    <DropdownItem className="nav-item"> {user && user.email}</DropdownItem>
                   </NavLink>
                   <NavLink tag="li">
                     <DropdownItem className="nav-item">Settings</DropdownItem>
