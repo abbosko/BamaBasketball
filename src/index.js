@@ -85,7 +85,6 @@ root.render(
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="players" element={<Players />} />
-                    <Route path="userprofile" element={<UserProfile />} />
                     {/* Add more routes here */}
                   </AdminLayout>
                 </ProtectedRoute>
