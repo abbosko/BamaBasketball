@@ -79,6 +79,15 @@ var routes = [
     component: <SignIn />,
     layout: "/admin",
   },
+  {
+    path: "/userprofile",
+    name: "UserProfile",
+    side: "False",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-single-02",
+    component: <UserProfile />,
+    layout: "/admin",
+  },
 ].concat(dashroutes);
 
 

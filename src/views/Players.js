@@ -76,14 +76,14 @@ function Players() {
                       <th style = {{fontSize: 20}}>Athlete </th>
                       <th style = {{fontSize: 20}}>Number</th>
                     </tr>
-                  </thead>
+                </thead>
                   <tbody>
                     {Object.values(playerList).map((val, key) => {
                     return (
                         <tr>
                             <td><img src={val.pic} alt="Player" style={{width: 80, height: 100, borderRadius: 150 / 2,}} /></td>
-                            <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic, hawkins_id: val.hawkins_id, kinexon_id: val.kinexon_id, firstbeat_id: val.firstbeat_id}} style = {{ color: '#FFF', fontSize: 20}}>{val.fname} {val.lname} </Link></td>
-                            <td style = {{fontSize: 20}}>{val.number}</td>
+                            <td> <Link to={"/admin/playerDashboard/" + val.number} state={{fname: val.fname, lname: val.lname, pic: val.pic, hawkins_id: val.hawkins_id, kinexon_id: val.kinexon_id, firstbeat_id: val.firstbeat_id}} style = {{ color: '#B2B2B2', fontSize: 20}}>{val.fname} {val.lname} </Link></td>
+                            <td style = {{fontSize: 20, color: '#B2B2B2'}}>{val.number}</td>
                         </tr>
                     )
                 })}

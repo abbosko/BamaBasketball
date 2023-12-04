@@ -28,6 +28,7 @@ import ProtectedRoute from 'ProtectedRoute.js';
 import SignIn from 'views/SignIn.js';
 import Dashboard from 'views/Dashboard.js';
 import Players from 'views/Players.js';
+import UserProfile from 'views/UserProfile.js';
 
 import "assets/scss/black-dashboard-react.scss";
 import "assets/demo/demo.css";
@@ -84,6 +85,7 @@ root.render(
                     <Route index element={<Dashboard />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="players" element={<Players />} />
+                    <Route path="userprofile" element={<UserProfile />} />
                     {/* Add more routes here */}
                   </AdminLayout>
                 </ProtectedRoute>
