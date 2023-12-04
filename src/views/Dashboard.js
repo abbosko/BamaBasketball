@@ -16,7 +16,7 @@
 
 */
 import React from "react";
-import { useEffect } from "react";
+import { useRef } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
@@ -24,7 +24,7 @@ import { Bar } from "react-chartjs-2";
 
 import { getDatabase, ref, get, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
-import {call_set_apis} from 'variables/apiFunctions.js';
+import { useReactToPrint} from 'react-to-print';
 
 // reactstrap components
 import {
@@ -244,10 +244,20 @@ function graphData(mtx, col, unit, c) {
 };
 
 function Dashboard(props) {
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   return (
     <>
-      <div className="content">
+      <div  className="content">
         <h1>Team Statistics</h1>
+        <Button color="danger" className="animation-on-hover" onClick = {handlePrint}>Export PDF</Button>
+        <Button color="danger" className="animation-on-hover" onClick = {() => window.print()}>Export Player PDF</Button>
+        <style type="text/css" media="print">{"\
+  @page {\ size: landscape;\ }\
+"}</style>
+ <div>
         <Row>
           <Col xs="4">
             <Card>
@@ -384,7 +394,7 @@ function Dashboard(props) {
                 </CardTitle>
               </CardHeader>
               <CardBody>
-                <div className="chart-area">
+                <div className="chart-area" >
                   <Bar
                     data={graphData(fbMatrix, 1, "Status", "#ff5ed1")}
                     options={chart_options}
@@ -713,6 +723,7 @@ function Dashboard(props) {
             </Card>
           </Col>
         </Row>
+        </div>
       </div>
     </>
   );
