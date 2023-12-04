@@ -131,9 +131,9 @@ function AdminNavbar(props) {
                   <NavLink tag="li">
                     <DropdownItem className="nav-item"> {user && user.email}</DropdownItem>
                   </NavLink>
-                  <NavLink tag="li">
+                  {/* <NavLink tag="li" id="account" href="/admin/userprofile">
                     <DropdownItem className="nav-item">Account </DropdownItem>
-                  </NavLink>
+                  </NavLink> */}
                   <NavLink
                     //tag="li"
                     id="logout"
