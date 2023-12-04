@@ -16,7 +16,8 @@
 
 */
 import React from "react";
-import { useEffect } from "react";
+import { useRef } from "react";
+import {getData} from '../export.js';
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
@@ -26,7 +27,8 @@ import {useLocation} from "react-router-dom";
 
 import { getDatabase, ref, get, query, limitToLast} from "firebase/database";
 import { initializeApp } from 'firebase/app';
-import {call_set_apis} from 'variables/apiFunctions.js';
+import { useReactToPrint } from 'react-to-print';
+
 
 // reactstrap components
 import {
@@ -228,16 +230,50 @@ function graphData(mtx, id, col, unit, c) {
   };
 };
 
+function setStartDate(date) {
+  
+}
+
 function PlayerDashboard(props) {
   const location = useLocation();
+  var data = [];
+  const getDataL = (kin_id, fb_id, hawk_id) =>{
+    Object.values(kinList).map((val, key) => {
+    let ans = Object.values(val).map((val2, key2) => {
+      if(val2.player_id == kin_id) {
+          data = [val2.accel_load_accum, val2.accel_load_accum_avg_per_minute, val2.event_count_change_of_orientation, val2.event_count_jump, val2.jump_height_max, val2.speed_max, val2.distance_total]
+        }})})
 
+    Object.values(hawkList).map((val, key) => {
+      let ans = Object.values(val).map((val2, key2) => {
+        if(val2.player_id == hawk_id) {
+            data.push([val2.brakePhase,val2.brakePwr,val2.brakeNetImp,val2.jumpHeight,val2.mRSI,val2.LRBrakeForce,val2.prpp,val2.propNetImp,val2.timeTakeoff])}})})
+        
+    Object.values(fbList).map((val, key) => {
+      let ans = Object.values(val).map((val2, key2) => {
+        if(val2.player_id == fb_id) {
+          data.push([val2.energyConsumptionTotal,val2.trimp,val2.playerStatusScore])}})})
+  
+        
+    getData(data);
+        };
+      const componentRef = useRef();
+      const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        copyStyles:false
+      });
+    
   return (
     <>
-      <div className="content">
+        
+      <div ref={componentRef} className="content">
         <h1>Player Statistics</h1>
         <h2 style={{color: '#a9a9a9'}}>{location.state.fname} {location.state.lname}</h2>
         <Row>
-          <Col xs="4">
+          <Col xs="4">   
+          <Button color="danger" className="animation-on-hover" onClick = {() => getDataL(location.state.kinexon_id, location.state.firstbeat_id, location.state.hawkins_id)}>Export Player CSV</Button>
+          <Button color="danger" className="animation-on-hover" onClick = {handlePrint}>Export Player PDF</Button>
+    
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Kinexon Stats</CardTitle>
