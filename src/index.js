@@ -23,6 +23,11 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import AdminLayout from "layouts/Admin/Admin.js";
 import { AuthContextProvider } from 'AuthContext.js';
+import ProtectedRoute from 'ProtectedRoute.js';
+
+import SignIn from 'views/SignIn.js';
+import Dashboard from 'views/Dashboard.js';
+import Players from 'views/Players.js';
 
 import "assets/scss/black-dashboard-react.scss";
 import "assets/demo/demo.css";
@@ -61,12 +66,33 @@ root.render(
   <ThemeContextWrapper>
     <BackgroundColorWrapper>
       <BrowserRouter>
-      <AuthContextProvider>
+        <AuthContextProvider>
           <Routes>
-            <Route path='/admin/*' element={<AdminLayout />} />
+            {/* Sign-in route - Unprotected */}
+            <Route
+              path="/admin/SignIn"
+              element={
+                  <SignIn />
+              }
+            />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout>
+                    {/* Sub-routes within protected routes */}
+                    <Route index element={<Dashboard />} />
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="players" element={<Players />} />
+                    {/* Add more routes here */}
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            {/* Default route */}
             <Route
               path="*"
-              element={<Navigate to="/admin/SignIn" replace />}
+              element={<Navigate to="/admin/SignIn" />}
             />
           </Routes>
         </AuthContextProvider>

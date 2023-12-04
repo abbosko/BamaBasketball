@@ -42,7 +42,6 @@ const dashroutes = Object.values(playerlist).map((val, key) => {
 }
 )
 
-
 var routes = [
   {
     path: "/dashboard",
@@ -74,7 +73,7 @@ var routes = [
   {
     path: "/signin",
     name: "SignIn",
-    side: "True",
+    side: "False",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-single-02",
     component: <SignIn />,

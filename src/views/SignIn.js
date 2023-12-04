@@ -16,9 +16,7 @@
 
 */
 import React, { useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
-import { useEffect } from "react";
-import {call_set_apis} from 'variables/apiFunctions.js'
+import { useNavigate } from 'react-router-dom';
 import { UserAuth } from 'AuthContext.js'
 
 // Icons for the view/hide password button
@@ -32,7 +30,6 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  CardText,
   FormGroup,
   Form,
   Input,
@@ -47,7 +44,6 @@ function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { user, signIn } = UserAuth();
-  var flag = false;
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -67,18 +63,19 @@ function SignIn() {
 
   return (
     <>
-      <div className="content">
+      <div className="content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <div style={{ width: '100%', maxWidth: '800px', padding: '10px'}}>
         <Row>
-          <Col md="8">
+          <Col md="11">
             <Card>
               <CardHeader>
                 <h5 className="title">Please sign in to access the dashboard.</h5>
-              </CardHeader>
+              </CardHeader> 
               <Form 
                   onSubmit={handleSubmit}>
               <CardBody>
                   <Row>
-                    <Col className="pr-md-1" md="5">
+                    <Col className="pr-md-1" md="8  ">
                     <FormGroup>
                         <label htmlFor="exampleInputEmail1">
                           <p>Email address:</p>
@@ -88,7 +85,10 @@ function SignIn() {
                         onChange={(e) => setEmail(e.target.value)} />
                       </FormGroup>
                     </Col>
-                    <Col className="pl-md-1" md="4">
+                    </Row>
+                    <Row>
+                    <Col className="pl-md-1" md="8">
+                      <div style={{ width: '100%', maxWidth: '800px', padding: '10px'}}>
                         <FormGroup>
                             <label>Password:  </label>
                             <Input
@@ -105,13 +105,14 @@ function SignIn() {
                                 <FontAwesomeIcon
                                   icon={showPassword ? faEyeSlash : faEye}
                                   className="password-toggle-icon"
+                                  color="primary"
                                 />
                               </button>
                             </span>
                         </FormGroup>
+                        </div>
                     </Col>
                   </Row>
-
               </CardBody>
               <CardFooter>
               {error && <h5 className="title">Incorrect username or password.</h5>}
@@ -122,9 +123,10 @@ function SignIn() {
               </Form>
             </Card>
           </Col>
-          <Col md="4">
+          <Col md="11">
           </Col>
         </Row>
+      </div>
       </div>
     </>
   );
