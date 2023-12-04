@@ -1032,10 +1032,6 @@ function Icons() {
                     md="3"
                     sm="4"
                   >
-                    <div className="font-icon-detail">
-                      <i className="tim-icons icon-zoom-split" />
-                      <p>icon-zoom-split</p>
-                    </div>
                   </Col>
                   <Col
                     className="font-icon-list col-xs-6 col-xs-6"
