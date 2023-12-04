@@ -247,20 +247,19 @@ function Dashboard(props) {
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
+    copyStyles:false,
+    documentTitle: "Team Statistics"
   });
   return (
     <>
       <div  className="content">
         <h1>Team Statistics</h1>
         <Button color="danger" className="animation-on-hover" onClick = {handlePrint}>Export PDF</Button>
-        <Button color="danger" className="animation-on-hover" onClick = {() => window.print()}>Export Player PDF</Button>
-        <style type="text/css" media="print">{"\
-  @page {\ size: landscape;\ }\
-"}</style>
- <div>
+ <div ref={componentRef}>
         <Row>
           <Col xs="4">
             <Card>
+              
               <CardHeader>
                 <CardTitle tag="h4">Kinexon Stats</CardTitle>
               </CardHeader>

@@ -260,6 +260,7 @@ function PlayerDashboard(props) {
       const componentRef = useRef();
       const handlePrint = useReactToPrint({
         content: () => componentRef.current,
+        copyStyles:false
       });
     
   return (
@@ -270,8 +271,8 @@ function PlayerDashboard(props) {
         <h2 style={{color: '#a9a9a9'}}>{location.state.fname} {location.state.lname}</h2>
         <Row>
           <Col xs="4">   
-          <Button color="danger" className="animation-on-hover" onClick = {() => getDataL(location.state.kinexon_id, location.state.firstbeat_id, location.state.hawkins_id)}>Export CSV</Button>
-          <Button color="danger" className="animation-on-hover" onClick = {handlePrint}>Export PDF</Button>
+          <Button color="danger" className="animation-on-hover" onClick = {() => getDataL(location.state.kinexon_id, location.state.firstbeat_id, location.state.hawkins_id)}>Export Player CSV</Button>
+          <Button color="danger" className="animation-on-hover" onClick = {handlePrint}>Export Player PDF</Button>
     
             <Card>
               <CardHeader>
