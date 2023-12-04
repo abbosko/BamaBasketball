@@ -248,7 +248,8 @@ function Dashboard(props) {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     copyStyles:false,
-    documentTitle: "Team Statistics"
+    documentTitle: "Team Statistics",
+    pageStyle:"@page { size: landscape; margin: 5%}"
   });
   return (
     <>
