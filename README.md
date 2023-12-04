@@ -1,5 +1,6 @@
 
-Alabama Basketball Athelete Management System
+Bamalytics!
+Alabama Basketball Athlete Management System
 
 Abbie Bosko, Alyssa Gabrielson, Sydney Pierce, Reaghan Dougherty
 The University of Alabama
