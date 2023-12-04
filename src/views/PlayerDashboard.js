@@ -690,7 +690,7 @@ function PlayerDashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Hawkin Stats</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Braking Net Impusle
+                  <i className="tim-icons icon-bell-55 text-info" /> Braking Net Impulse
                 </CardTitle>
               </CardHeader>
               <CardBody>
